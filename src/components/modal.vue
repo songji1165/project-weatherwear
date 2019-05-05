@@ -1,110 +1,103 @@
 <template>
-    <transition name="modal">
-        <div class="modal-mask">
-          <div class="modal-wrapper">
-            <div class="modal-container">
-    
-              <div class="modal-header">
-                <slot name="header">
-                  default header
-                </slot>
-              </div>
-    
-              <div class="modal-body">
-                <slot name="body">
-                  default body
-                </slot>
-              </div>
-    
-              <div class="modal-footer">
-                <slot name="footer">
-                  default footer
-                  <button class="modal-default-button" @click="$emit('close')">
-                    OK
-                  </button>
-                </slot>
-              </div>
-            </div>
+  <transition name="modal">
+    <div class="modal-mask">
+      <div class="modal-wrapper">
+        <div class="modal-container">
+          <div class="modal-header">
+            <slot name="header">
+              17~19도
+            </slot>
+          </div>
+
+          <div class="modal-body">
+            <slot name="body">
+              니트, 가디건, 후드티, 맨투맨, 청바지, 면바지, 슬랙스, 원피스
+            </slot>
+          </div>
+
+          <div class="modal-footer">
+            <slot name="footer">
+              <button class="modal-default-button" @click="handleCloseModal">
+                OK
+              </button>
+            </slot>
           </div>
         </div>
-    </transition>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script>
-    Vue.component('modal', {
-  template: '#modal-template'
-})
-
-// start app
-new Vue({
-  el: '#app',
-  data: {
-    showModal: false
-  }
-})
+  // start app
+  export default {
+    methods: {
+      handleCloseModal() {
+        this.$emit("onClose");
+      }
+    }
+  };
 </script>
 
 <style>
-.modal-mask {
-  position: fixed;
-  z-index: 9998;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, .5);
-  display: table;
-  transition: opacity .3s ease;
-}
+  .modal-mask {
+    /* position: fixed; */
+    z-index: 9998;
+    /* top: 0; */
+    /* left: 0; */
+    width: 100%;
+    height: 100%;
+    /* background-color: rgba(0, 0, 0, 0.5); */
+    display: table;
+    transition: opacity 0.3s ease;
+  }
 
-.modal-wrapper {
-  display: table-cell;
-  vertical-align: middle;
-}
+  .modal-wrapper {
+    display: table-cell;
+    vertical-align: middle;
+  }
 
-.modal-container {
-  width: 300px;
-  margin: 0px auto;
-  padding: 20px 30px;
-  background-color: #fff;
-  border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
-  transition: all .3s ease;
-  font-family: Helvetica, Arial, sans-serif;
-}
+  .modal-container {
+    width: 300px;
+    margin: 0 auto;
+    padding: 20px 30px;
+    background-color: #fff;
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+    transition: all 0.3s ease;
+    font-family: Helvetica, Arial, sans-serif;
+  }
 
-.modal-header h3 {
-  margin-top: 0;
-  color: #42b983;
-}
+  .modal-header h3 {
+    margin-top: 0;
+    color: #42b983;
+  }
 
-.modal-body {
-  margin: 20px 0;
-}
+  .modal-body {
+    margin: 20px 0;
+  }
 
-.modal-default-button {
-  float: right;
-}
+  .modal-footer:after {
+    content: "";
+    display: block;
+    clear: both;
+  }
 
-/*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
+  .modal-default-button {
+    float: right;
+  }
 
-.modal-enter {
-  opacity: 0;
-}
+  .modal-enter {
+    opacity: 0;
+  }
 
-.modal-leave-active {
-  opacity: 0;
-}
+  .modal-leave-active {
+    opacity: 0;
+  }
 
-.modal-enter .modal-container,
-.modal-leave-active .modal-container {
-  -webkit-transform: scale(1.1);
-  transform: scale(1.1);
-}</style>
+  .modal-enter .modal-container,
+  .modal-leave-active .modal-container {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+  }
+</style>

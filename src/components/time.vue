@@ -3,7 +3,7 @@
     <h2 class="time title">시간별 예보</h2>
     <div class="time wrap">
       <ul class="time-list">
-        <li>
+        <li v-for>
           <p class="time time-zone">
             오전 9시
           </p>
@@ -16,3 +16,17 @@
     </div>
   </div>
 </template>
+
+<script>
+
+export default{
+  data(){
+    return {
+      
+    }
+  }
+}
+</script>
+
+<style>
+</style>

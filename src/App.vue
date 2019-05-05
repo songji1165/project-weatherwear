@@ -1,21 +1,13 @@
 <template>
   <div id="app">
-    <header-bar/>
-    <main-wrap/>
-    <time-wrap/>
-    <daily-wrap/>
-    
+   <router-view></router-view>
   </div>
 </template>
 
 <script>
-  import headerBar from "./components/header.vue"
-  import mainWrap from "./components/main.vue"
-  import timeWrap from "./components/time.vue"
-  import dailyWrap from "./components/daily.vue"
   
 export default {
-  components : {headerBar, mainWrap,timeWrap, dailyWrap, }
+  
 }
 </script>
 

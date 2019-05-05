@@ -1,29 +1,6 @@
 # project-weather-wear
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+weather wear는 내가 직접 사용하기 위해 만들어보는 프로젝트이다.
+들쑥날쑥한 날씨때문에 밖에 나가기 전에 항상 옷을 어떻게 입어야하나 고민을 하곤 했다.
+그래서 기온별로 옷차림에 대해 알려주는 앱이나 웹페이지등이 있으면 좋겠다는 생각을 했다.
+우선, 웹페이지로 해당 프로젝트를 만들 것 이다.

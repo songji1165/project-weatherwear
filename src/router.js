@@ -1,7 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Home from "./views/Home.vue";
-import headerBar from "./components/header.vue";
 
 Vue.use(Router);
 
