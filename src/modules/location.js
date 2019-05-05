@@ -1,7 +1,3 @@
-function loadCoords() {
-  navigator.geolocation.getCurrentPosition(geoSucc, geoErr);
-}
-
 export function isLocation() {
   return localStorage.getItem("location");
 }
@@ -14,7 +10,9 @@ export function checkAgreement() {
         longitude
       });
     },
-    () => {}
+    () => {
+      alert("동의를 하셔야 서비스를 이용 할 수 있습니다 =");
+    }
   );
 }
 

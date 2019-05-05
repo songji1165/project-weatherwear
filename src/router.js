@@ -13,21 +13,10 @@ const router = new Router({
   routes: [
     {
       path: "/",
-      component: Home
+      component: Weather
     },
-    {
-      path: "/weather",
-      component: Weather,
-      beforeEnter: requiredLocation
-    }
+    
   ]
 });
-
-function requiredLocation(to, from, next) {
-  if (!isLocation()) {
-    next("/");
-  }
-  next();
-}
 
 export default router;
