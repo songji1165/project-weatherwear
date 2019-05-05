@@ -2,11 +2,9 @@ function loadCoords() {
   navigator.geolocation.getCurrentPosition(geoSucc, geoErr);
 }
 
-var search = function() {
-  if (localStorage.getItem("location")) {
-  } else {
-  }
-};
+export function isLocation() {
+  return localStorage.getItem("location");
+}
 
 export function checkAgreement() {
   navigator.geolocation.getCurrentPosition(
