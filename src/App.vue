@@ -1,11 +1,16 @@
 <template>
   <div id="app">
+      <Header-bar />
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-export default {};
+  import HeaderBar from "@/components/Header.vue";
+
+export default {
+  components : { HeaderBar }
+};
 </script>
 
 <style>

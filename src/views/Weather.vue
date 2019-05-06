@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    <Header-bar />
     <Main-wrap />
     <Time-wrap />
     <Daily-wrap />
@@ -12,7 +11,7 @@
 
 <script>
 
-import HeaderBar from "@/components/Header.vue";
+
 import MainWrap from "@/components/Main.vue";
 import TimeWrap from "@/components/Time.vue";
 import DailyWrap from "@/components/Daily.vue";
@@ -23,7 +22,6 @@ const { VUE_APP_WHATHER_APP_KEY } = process.env
 export default {
   name: "home",
   components: {
-    HeaderBar,
     MainWrap,
     TimeWrap,
     DailyWrap
@@ -44,6 +42,8 @@ export default {
       `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${VUE_APP_WHATHER_APP_KEY}&units=metric`
     );
     this.location = await response.json();
+      //response.json()을 통해 정보 받아옴
+      console.log('this',this.location)
   }
     },
   mounted() {

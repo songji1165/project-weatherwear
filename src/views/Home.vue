@@ -11,7 +11,7 @@
 import { checkAgreement } from "../modules/location";
 export default {
   created() {
-    checkAgreement();
+    // checkAgreement();
   }
 };
 </script>
