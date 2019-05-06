@@ -1,3 +1,26 @@
 {
-  "seoul": { "lat": 37.566535, "lon": 126.97796919999996 }
+  "seoul": {
+    "krName": "서울",
+    "lat": 37.566535,
+    "lon": 126.97796919999996,
+    "enName": "seoul"
+  },
+  "kyoungkido": {
+    "krName": "경기도",
+    "lat": 37.41379999999999,
+    "lon": 127.51829999999995,
+    "enName": "kyoungkido"
+  },
+  "gangwon": {
+    "krName": "강원도",
+    "lat": 37.8228,
+    "lon": 128.15549999999996,
+    "enName": "gangwon"
+  },
+  "busan": {
+    "krName": "부산",
+    "lat": 35.1795543,
+    "lon": 129.07564160000004,
+    "enName": "busan"
+  }
 }
