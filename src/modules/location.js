@@ -1,7 +1,7 @@
 //1. geolocation API 사용가능 여부
 export function geoAPI() {
   if ("geolocation" in navigator) {
-    checkAgreement();
+    // checkAgreement();
   } else {
     // home페이지 이동 후 경고창 받음
   }
@@ -10,7 +10,7 @@ export function geoAPI() {
 //2. 사용자 위치 저장 값이 있는지 확인 (없으면 위치 요청/ 있으면 api호출)
 export function checkSavedLocation() {
   if (localStorage.getItem("location")) {
-    requsetAPI();
+    // requsetAPI();
   } else {
     requestLocation();
   }
@@ -26,6 +26,7 @@ export function requestLocation() {
       });
     },
     err => {
+      err;
       // home페이지로 이동 후 다시 승인 할 수 있도록 함
     }
   );

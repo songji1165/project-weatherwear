@@ -1,15 +1,15 @@
 <template>
   <div id="app">
-      <Header-bar />
+    <Header-bar />
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-  import HeaderBar from "@/components/Header.vue";
+import HeaderBar from "@/components/Header.vue";
 
 export default {
-  components : { HeaderBar }
+  components: { HeaderBar }
 };
 </script>
 
@@ -60,7 +60,7 @@ li {
   left: 0;
   width: 100%;
   height: 50px;
-  line-height: 50px
+  line-height: 50px;
 }
 /* main1 */
 .ww-main > div {

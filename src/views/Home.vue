@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { checkAgreement } from "../modules/location";
+// import { checkAgreement } from "../modules/location";
 export default {
   created() {
     // checkAgreement();

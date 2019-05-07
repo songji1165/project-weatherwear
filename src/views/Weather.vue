@@ -10,14 +10,11 @@
 </template>
 
 <script>
-
-
 import TodayWrap from "@/components/Today.vue";
 import HourlyWrap from "@/components/Hourly.vue";
 import DailyWrap from "@/components/Daily.vue";
 
-
-const { VUE_APP_WHATHER_APP_KEY } = process.env
+// const { VUE_APP_WHATHER_APP_KEY } = process.env;
 
 export default {
   name: "home",
@@ -29,12 +26,12 @@ export default {
   data() {
     return {
       selectedLocation: null,
-      selectValue : ''
+      selectValue: ""
     };
-  },
+  }
   // methods : {
   //   async getweather (value) {
-      
+
   //     const { lat, lon } = this.locations[value || 'seoul'];
 
   //   const response = await fetch(
@@ -48,11 +45,11 @@ export default {
   // mounted() {
   //   // 해체할당!
   //   this.getweather(this.selectValue)
-  
+
   // },
   // watch: {
   //   selectValue (value) {
-      
+
   //     this.getweather(value)
   //   }
   // }

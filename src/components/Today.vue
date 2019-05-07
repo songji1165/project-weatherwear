@@ -3,7 +3,7 @@
     <div class="seletBox">
       <select name="local" id="local" v-model="selectValue">
         <option
-          v-for="({krName, enName}) in locations"
+          v-for="{ krName, enName } in locations"
           :value="enName"
           :key="enName"
         >
@@ -20,27 +20,25 @@
         </p>
         <Modal class="modal" v-if="showModal" @onClose="handleCloseModal">
           <div slot="header">
-            <h3></h3>
+            <h3>{{ currentCloth }}</h3>
           </div>
           <div slot="body"></div>
         </Modal>
       </div>
 
       <div class="main temper">
-        <!-- <ionicons name="ios-rainy"></ionicons> -->
-        <h3 class="temper-temper">
-          <i class="fas fa-cloud-rain"></i>18 &#176;
-        </h3>
+        <h3 class="temper-temper"><i :class="fas"></i>{{ temp }} &#176;</h3>
       </div>
     </div>
   </div>
 </template>
-
 <script>
   import { getWeatherAPI } from "@/api/index.js";
   import Modal from "./Modal";
   import locations from "@/json/location.json";
+  import clothes from "@/json/cloth.json";
   // import {ionicons} from '@expo/vector-icons'
+  const { VUE_APP_WHATHER_APP_KEY } = process.env;
 
   export default {
     components: { Modal },
@@ -50,16 +48,33 @@
         locations,
         selectValue: "seoul",
         lat: "",
-        lon: ""
+        lon: "",
+        res: "",
+        weather: {},
+        temp: "",
+        description: "",
+        fas: "",
+        clothes
       };
     },
     methods: {
       handleCloseModal() {
         this.showModal = false;
+      },
+      async getWeather(value) {
+        const response = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?lat=${
+            this.lat
+          }&lon=${this.lon}&appid=${VUE_APP_WHATHER_APP_KEY}&units=metric`
+        );
+        this.weather = await response.json();
+        console.log("json", this.weather);
+        // console.log("temp", this.weather.main.temp);
+        // console.log("weather", this.weather.weather[0].description);
+        this.temp = this.weather.main.temp;
+        this.description = this.weather.weather[0].description;
+        this.fas = `fas fa-smog`;
       }
-      // async getWeather(lat, lon) {
-      //   getWeatherAPI.weatherAPI(lat, lon).then(res => console.log(res));
-      // }
     },
     computed: {
       date() {
@@ -80,17 +95,30 @@
       },
       selectTitle() {
         return this.locations[this.selectValue].krName;
+      },
+      currentCloth() {
+        let tempScope = parseInt(this.temp);
+        let rightCloth = "";
+        for (property in this.clothes) {
+          this.clothes[property].scopne.indexOf(tempScope) != -1
+            ? (rightCloth = element.clothes)
+            : "";
+        }
+        return rightCloth;
       }
     },
     watch: {
       selectValue(en) {
-        console.log(en);
-        // this.lat = this.locations.en.lat;
-        console.log(this.locations[en].lat);
+        this.lat = this.locations[en].lat;
+        this.lon = this.locations[en].lon;
       }
     },
     mounted() {
-      // this.getWeather(this.locations.lat, this.locations.lon);
+      this.lat = this.locations[this.selectValue].lat;
+      this.lon = this.locations[this.selectValue].lon;
+      console.log(this.lon);
+
+      this.getWeather(this.lat, this.lon);
     }
   };
 </script>
