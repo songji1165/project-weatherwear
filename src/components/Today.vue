@@ -111,6 +111,7 @@
       selectValue(en) {
         this.lat = this.locations[en].lat;
         this.lon = this.locations[en].lon;
+        this.getWeather(this.lat, this.lon);
       }
     },
     mounted() {
