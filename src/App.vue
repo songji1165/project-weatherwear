@@ -1,11 +1,16 @@
 <template>
   <div id="app">
+    <Header-bar />
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-export default {};
+import HeaderBar from "@/components/Header.vue";
+
+export default {
+  components: { HeaderBar }
+};
 </script>
 
 <style>
@@ -55,6 +60,7 @@ li {
   left: 0;
   width: 100%;
   height: 50px;
+  line-height: 50px;
 }
 /* main1 */
 .ww-main > div {

@@ -4,15 +4,11 @@
       <div class="modal-wrapper">
         <div class="modal-container">
           <div class="modal-header">
-            <slot name="header">
-              17~19도
-            </slot>
+            <slot name="header"> </slot>
           </div>
 
           <div class="modal-body">
-            <slot name="body">
-              니트, 가디건, 후드티, 맨투맨, 청바지, 면바지, 슬랙스, 원피스
-            </slot>
+            <slot name="body"> </slot>
           </div>
 
           <div class="modal-footer">
