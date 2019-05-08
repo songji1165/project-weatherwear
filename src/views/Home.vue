@@ -8,10 +8,10 @@
 </template>
 
 <script>
-// import { checkAgreement } from "../modules/location";
-export default {
-  created() {
-    // checkAgreement();
-  }
-};
+  // import { checkAgreement } from "../modules/location";
+  export default {
+    created() {
+      // checkAgreement();
+    }
+  };
 </script>

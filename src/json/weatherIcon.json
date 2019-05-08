@@ -1,0 +1,8 @@
+{
+  "Clouds": { "Kr": "흐림", "iconName": "fas fa-cloud" },
+  "Haze": { "Kr": "안개", "iconName": "fas fa-smog" },
+  "Snow": { "Kr": "눈", "iconName": "far fa-snowflake" },
+  "Thunderstorm": { "Kr": "번개", "IconName": "fas fa-poo-storm" },
+  "Clear": { "Kr": "맑음", "iconName": "fas fa-sun" },
+  "Rain": { "Kr": "비", "iconName": "fas fa-cloud-rain" }
+}
