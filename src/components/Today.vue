@@ -1,5 +1,6 @@
 <template>
   <div class="main-wrap">
+    <Loading v-show="showLoading" class="loading"></Loading>
     <div class="selectBox">
       <select name="local" id="local" v-model="selectValue">
         <option
@@ -26,29 +27,36 @@
             <h3>{{ currentTemperScope }} &#176;</h3>
           </div>
           <div slot="body">
-            {{ currentCloth }}
+            {{ currentClothes }}
           </div>
         </Modal>
       </div>
 
       <div class="main temper">
-        <h3 class="temper-temper"><i :class="fas"></i>{{ temp }} &#176;</h3>
+        <h3 class="temper-temper"><i :class="fasIcon"></i>{{ temp }} &#176;</h3>
       </div>
     </div>
   </div>
 </template>
 <script>
   import { getWeatherAPI } from "@/api/index.js";
+  import {
+    wearIconNum,
+    selectedTempScope,
+    selectedClothes,
+    weatherIconSelet
+  } from "@/modules/search.js";
   import Modal from "./Modal";
+  import Loading from "./Loading";
   import locations from "@/json/location.json";
-  import clothes from "@/json/cloth.json";
   import WeatherIcons from "@/json/weatherIcon.json";
+  import moment from "moment";
 
   const { VUE_APP_WHATHER_APP_KEY } = process.env;
-  const moment = require("moment");
+  // const moment = require("moment");
 
   export default {
-    components: { Modal },
+    components: { Modal, Loading },
     data() {
       return {
         showModal: false,
@@ -58,80 +66,52 @@
         lon: "",
         res: "",
         imageWearNum: "0",
-        weather: {},
+        // weather: {},
         temp: "",
         description: "",
-        fas: "",
-        clothes,
-        WeatherIcons,
-        moment
+        fasIcon: "",
+        moment,
+        showLoading: true
       };
     },
     methods: {
       handleCloseModal() {
         this.showModal = !this.showModal;
       },
-      async getWeather(value) {
-        const response = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${
-            this.lat
-          }&lon=${this.lon}&appid=${VUE_APP_WHATHER_APP_KEY}&units=metric`
-        );
-        // this.loading = true
-        this.weather = await response.json();
-        // this.loading=false
-        console.log("json", this.weather);
-        // console.log("temp", this.weather.main.temp);
-        // console.log("weather", this.weather.weather[0].description);
-        this.temp = this.weather.main.temp;
-        this.description = this.weather.weather[0].main;
-        console.log(this.description);
-        this.fas = `fas fa-smog`;
-        this.wearIconselect();
-        this.weatherIconSelect();
-      },
-      wearIconselect() {
-        const clothesValue = Object.keys(this.clothes);
-        const stringTemp = String(parseInt(this.temp));
-        console.log(clothesValue);
-        console.log(parseInt(this.temp));
-        console.log(this.clothes[5].scope);
-        console.log(this.clothes[5].scope.indexOf(stringTemp));
-        const wearNum = clothesValue.filter(
-          e => clothes[e].scope.indexOf(stringTemp) !== -1
-        );
-        this.imageWearNum = wearNum;
-      },
-      weatherIconSelect() {
-        this.fas = WeatherIcons[this.description].iconName;
+      getWeather(lat, lon) {
+        getWeatherAPI(lat, lon)
+          .then(res => {
+            console.log("res");
+            const weather = res;
+            this.temp = parseInt(weather.main.temp);
+            this.imageWearNum = wearIconNum(this.temp);
+            this.description = weather.weather[0].main;
+            this.fasIcon = weatherIconSelet(this.description).iconName;
+          })
+          .then(() => setTimeout(() => (this.showLoading = false), 500));
+
+        // const response = await getWeatherAPI(this.lat, this.lon).fetch()
+        // fetch(
+        //   `https://api.openweathermap.org/data/2.5/weather?lat=${
+        //     this.lat
+        //   }&lon=${this.lon}&appid=${VUE_APP_WHATHER_APP_KEY}&units=metric`
+        // );
+
+        // this.weather = await response.json();
+        // console.log(
+        //   moment(this.weather.sys.sunset).format("YYYY[-]MM[-]DD,hh:mm A")
+        // );
       }
     },
     computed: {
-      date() {
-        // let today = new Date();
-        // let dd = today.getDate();
-        // let mm = today.getMonth() + 1;
-        // let yyyy = today.getFullYear();
-
-        // dd < 10 ? (dd = "0" + dd) : dd;
-        // mm < 10 ? (dd = "0" + mm) : mm;
-
-        // let minute = today.getMinutes();
-        // let hour = today.getHours();
-
-        // hour <= 12 ? (hour = "오후 " + hour) : (hour = "오전 " + hour);
-
-        // return `${yyyy}년 ${mm}월 ${dd}일  ${hour}시 ${minute}분`;
-        return moment().format();
-      },
       selectTitle() {
         return this.locations[this.selectValue].krName;
       },
-      currentCloth() {
-        return clothes[this.imageWearNum].clothes;
-      },
       currentTemperScope() {
-        return clothes[this.imageWearNum].temper;
+        return selectedTempScope(this.imageWearNum);
+      },
+      currentClothes() {
+        return selectedClothes(this.imageWearNum);
       },
       imageSrc() {
         return require(`@/assets/${this.imageWearNum}.png`);
@@ -140,11 +120,8 @@
     watch: {
       selectValue(en) {
         const { lat, lon } = this.locations[en];
-        // console.log("lat,lon", lat, lon);
         this.lat = lat;
         this.lon = lon;
-        // this.lat = this.locations[en].lat;
-        // this.lon = this.locations[en].lon;
         this.getWeather(this.lat, this.lon);
       }
     },
@@ -152,9 +129,8 @@
       const { lat, lon } = this.locations[this.selectValue];
       this.lat = lat;
       this.lon = lon;
-      // console.log(this.lon);
-
       this.getWeather(this.lat, this.lon);
+      // this.showLoading = true
     }
   };
 </script>
@@ -164,7 +140,14 @@
     height: 100vh;
     position: relative;
     padding-top: 60px;
-    border: 1px solid;
+  }
+  .loading {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
   }
   .selectBox {
     float: right;
@@ -176,6 +159,16 @@
     border-radius: 10px;
     padding-left: 10px;
     outline: none;
+    background: skyblue;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    outline: none;
+    border: none !important;
+    color: #fff;
+  }
+  option {
+    background: skyblue;
+    outline: none;
+    border: none;
   }
   .current {
     position: absolute;
