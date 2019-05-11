@@ -43,7 +43,7 @@ li {
 
 #app > div {
   /* margin: 30px 0; */
-  border: 1px solid;
+  /* border: 1px solid; */
   /* width: 100%; */
   /* height: 100vh; */
 }
@@ -54,18 +54,20 @@ li {
 }
 
 #head {
-  background: #d9d9d9;
+  background: skyblue;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 50px;
   line-height: 50px;
+  color: #fff;
+  z-index: 2
 }
 /* main1 */
 .ww-main > div {
   float: left;
-  border: 1px solid;
+  /* border: 1px solid; */
   margin: 70px 10%;
   text-align: center;
   width: 80%;
