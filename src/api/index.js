@@ -18,6 +18,8 @@ export const getLocalName = (lat, lon) => {
     .get(
       `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=${VUE_APP_GEOCODING_APP_KEY}`
     )
-    .then(res => res.data)
+    .then(res => {
+      console.log(res.data)
+      return res.data})
     .catch(err => console.log(err));
 };

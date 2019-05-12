@@ -1,17 +1,12 @@
 <template>
   <div class="main-wrap">
     <Loading v-show="showLoading" class="loading"></Loading>
-    <div class="selectBox">
-      <select name="local" id="local" v-model="selectValue">
-        <option
-          v-for="{ krName, enName } in locations"
-          :value="enName"
-          :key="enName"
-        >
-          {{ krName }}
-        </option>
-      </select>
-    </div>
+    <Select-box
+      v-model="selectedValue"
+      class="selectBox"
+      :locations="locations"
+      @handleClickSelect="handleClickSelect"
+    ></Select-box>
     <div class="main current">
       <h3 class="location">{{ selectTitle }}</h3>
       <p class="location-time">
@@ -48,6 +43,7 @@
   } from "@/modules/search.js";
   import Modal from "./Modal";
   import Loading from "./Loading";
+  import SelectBox from "./Select";
   import locations from "@/json/location.json";
   import WeatherIcons from "@/json/weatherIcon.json";
   import {
@@ -60,17 +56,16 @@
   import moment from "moment";
 
   export default {
-    components: { Modal, Loading },
+    components: { Modal, Loading, SelectBox },
     data() {
       return {
         showModal: false,
         locations,
-        selectValue: "seoul",
+        selectedValue: "seoul",
         lat: "",
         lon: "",
         res: "",
         imageWearNum: "0",
-        // weather: {},
         temp: "",
         description: "",
         fasIcon: "",
@@ -84,6 +79,13 @@
     methods: {
       handleCloseModal() {
         this.showModal = !this.showModal;
+      },
+      handleClickSelect(a) {
+        const { lat, lon } = this.locations[a];
+        this.lat = lat;
+        this.lon = lon;
+        this.requestWeather(this.lat, this.lon);
+        this.selectTitle = this.locations[a].krName;
       },
       async requestWeather(lat, lon) {
         const response = await getWeatherAPI(lat, lon);
@@ -112,15 +114,6 @@
       },
       imageSrc() {
         return require(`@/assets/${this.imageWearNum}.png`);
-      }
-    },
-    watch: {
-      selectValue(en) {
-        const { lat, lon } = this.locations[en];
-        this.lat = lat;
-        this.lon = lon;
-        this.requestWeather(this.lat, this.lon);
-        this.selectTitle = this.locations[en].krName;
       }
     },
     async mounted() {
@@ -170,23 +163,6 @@
   .selectBox {
     float: right;
     margin-right: 5%;
-  }
-  select {
-    height: 30px;
-    width: 80px;
-    border-radius: 10px;
-    padding-left: 10px;
-    outline: none;
-    background: skyblue;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-    outline: none;
-    border: none !important;
-    color: #fff;
-  }
-  option {
-    background: skyblue;
-    outline: none;
-    border: none;
   }
   .current {
     position: absolute;
