@@ -12,6 +12,16 @@
   </div>
 </template>
 
-<script></script>
+<script>
+  export default {
+    props: ["locations"],
+    watch : {
+      selectValue(){
+        this.$emit('click',selectValue)
+      }
+    }
+    }
+  
+</script>
 
 <style scoped></style>

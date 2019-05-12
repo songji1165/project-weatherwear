@@ -39,7 +39,7 @@
   </div>
 </template>
 <script>
-  import { getWeatherAPI } from "@/api/index.js";
+  import { getWeatherAPI, getLocalName } from "@/api/index.js";
   import {
     wearIconNum,
     selectedTempScope,
@@ -50,10 +50,14 @@
   import Loading from "./Loading";
   import locations from "@/json/location.json";
   import WeatherIcons from "@/json/weatherIcon.json";
+  import {
+    checkSavedLocation,
+    geoSucc,
+    geoErr,
+    geoLocationInLS,
+    requestLocation
+  } from "@/modules/location.js";
   import moment from "moment";
-
-  const { VUE_APP_WHATHER_APP_KEY } = process.env;
-  // const moment = require("moment");
 
   export default {
     components: { Modal, Loading },
@@ -71,42 +75,35 @@
         description: "",
         fasIcon: "",
         moment,
-        showLoading: true
+        showLoading: true,
+        position: null,
+        krLocalNAme: "",
+        selectTitle: ""
       };
     },
     methods: {
       handleCloseModal() {
         this.showModal = !this.showModal;
       },
-      getWeather(lat, lon) {
-        getWeatherAPI(lat, lon)
-          .then(res => {
-            console.log("res");
-            const weather = res;
-            this.temp = parseInt(weather.main.temp);
-            this.imageWearNum = wearIconNum(this.temp);
-            this.description = weather.weather[0].main;
-            this.fasIcon = weatherIconSelet(this.description).iconName;
-          })
-          .then(() => setTimeout(() => (this.showLoading = false), 500));
-
-        // const response = await getWeatherAPI(this.lat, this.lon).fetch()
-        // fetch(
-        //   `https://api.openweathermap.org/data/2.5/weather?lat=${
-        //     this.lat
-        //   }&lon=${this.lon}&appid=${VUE_APP_WHATHER_APP_KEY}&units=metric`
-        // );
-
-        // this.weather = await response.json();
-        // console.log(
-        //   moment(this.weather.sys.sunset).format("YYYY[-]MM[-]DD,hh:mm A")
-        // );
+      async requestWeather(lat, lon) {
+        const response = await getWeatherAPI(lat, lon);
+        console.log(response);
+        this.temp = parseInt(response.main.temp);
+        this.imageWearNum = wearIconNum(this.temp);
+        this.description = response.weather[0].main;
+        this.fasIcon = weatherIconSelet(this.description).iconName;
+        setTimeout(() => (this.showLoading = false), 500);
+      },
+      async requestLocalName(lat, lon) {
+        const responseLocalName = await getLocalName(lat, lon);
+        const localNameArr = responseLocalName.results[3].formatted_address.split(
+          " "
+        );
+        console.log(localNameArr);
+        this.selectTitle = localNameArr[2];
       }
     },
     computed: {
-      selectTitle() {
-        return this.locations[this.selectValue].krName;
-      },
       currentTemperScope() {
         return selectedTempScope(this.imageWearNum);
       },
@@ -122,15 +119,36 @@
         const { lat, lon } = this.locations[en];
         this.lat = lat;
         this.lon = lon;
-        this.getWeather(this.lat, this.lon);
+        this.requestWeather(this.lat, this.lon);
+        this.selectTitle = this.locations[en].krName;
       }
     },
-    mounted() {
-      const { lat, lon } = this.locations[this.selectValue];
-      this.lat = lat;
-      this.lon = lon;
-      this.getWeather(this.lat, this.lon);
-      // this.showLoading = true
+    async mounted() {
+      console.log("처음", this.lat, this.lon);
+
+      if (navigator.geolocation) {
+        try {
+          const { coords } = await requestLocation();
+          geoSucc(coords);
+          const position = await geoLocationInLS();
+          this.lat = position.lat;
+          this.lon = position.lon;
+          console.log("현", this.lat, this.lon);
+          this.requestWeather(this.lat, this.lon);
+          this.requestLocalName(this.lat, this.lon);
+        } catch (error) {
+          console.log(error);
+          const { lat, lon } = this.locations[this.selectValue];
+          this.lat = lat;
+          this.lon = lon;
+          this.requestWeather(this.lat, this.lon);
+        }
+      } else {
+        const { lat, lon } = this.locations[this.selectValue];
+        this.lat = lat;
+        this.lon = lon;
+        this.requestWeather(this.lat, this.lon);
+      }
     }
   };
 </script>

@@ -9,7 +9,7 @@
 import HeaderBar from "@/components/Header.vue";
 
 export default {
-  components: { HeaderBar }
+  components: { HeaderBar },
 };
 </script>
 
