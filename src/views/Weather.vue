@@ -3,61 +3,35 @@
     <Loading v-show="showLoading" class="loading"></Loading>
     <div class="main current">
       <div class="select-wrap">
-          <button class="current-position">
-              내 위치
-            <i class="fas fa-map-marker-alt"></i>
-          </button>
-          <Select-box
-            class="select-box"
-            v-model="selectedValue"
-            :locations="locations"
-            @handleClickSelect="handleClickSelect"
-          ></Select-box>
-        </div>
-        <!-- kakao api 여기만 씀(lat,lon 필요) -->
+        <button class="current-position">
+          내 위치
+          <i class="fas fa-map-marker-alt"></i>
+        </button>
+        <Select-box
+          class="select-box"
+          v-model="selectedValue"
+          :locations="locations"
+          @handleClickSelect="handleClickSelect"
+        ></Select-box>
+      </div>
       <h3 class="location">{{ selectTitle }}</h3>
       <p class="location-time">
         {{ currentDate }}
       </p>
 
-      <div class="temper-slider">
-        <div class="wear">
-          <p class="wear-icon" @click="handleCloseModal">
-            <img :src="imageSrc" />
-          </p>
-          <Modal class="modal" v-if="showModal" @onClose="handleCloseModal">
-            <div slot="header">
-              <h3>{{ currentTemperScope }} &#176;</h3>
-            </div>
-            <div slot="body">
-              {{ currentClothes }}
-            </div>
-          </Modal>
-        </div>
-        <div class="main temper">
-          <h3 class="temper-temper">
-            <i :class="fasIcon"></i>{{ temp }} &#176;
-          </h3>
-        </div>
-      </div>
+      <Temper-slider class="slider" :lat="lat" :lon="lon"> </Temper-slider>
     </div>
-      
-    
   </div>
 </template>
 <script>
   import { getWeatherAPI, getLocalName } from "@/api/index.js";
-  import {
-    wearIconNum,
-    selectedTempScope,
-    selectedClothes,
-    weatherIconSelet
-  } from "@/modules/search.js";
-  import Modal from "@/components/Modal";
+
+  import TemperSlider from "@/components/TemperSlider";
   import Loading from "@/components/Loading";
   import SelectBox from "@/components/Select";
+
   import locations from "@/json/location.json";
-  import WeatherIcons from "@/json/weatherIcon.json";
+
   import {
     checkSavedLocation,
     geoSucc,
@@ -68,97 +42,39 @@
   import moment from "moment";
 
   export default {
-    components: { Modal, Loading, SelectBox },
+    components: { Loading, SelectBox, TemperSlider },
     data() {
       return {
-        showModal: false,
+        showLoading: false,
         locations,
         selectedValue: "seoul",
+        selectTitle: "",
+        krLocalNAme: "",
         lat: "",
         lon: "",
-        res: "",
-        imageWearNum: "0",
-        temp: "",
-        description: "",
-        fasIcon: "",
         moment,
-        showLoading: true,
-        position: null,
-        krLocalNAme: "",
-        selectTitle: ""
+        position: null
       };
     },
     methods: {
-      handleCloseModal() {
-        this.showModal = !this.showModal;
-      },
       handleClickSelect(selectedLocation) {
-        console.log(selectedLocation);
         const { lat, lon } = this.locations[selectedLocation];
         this.lat = lat;
         this.lon = lon;
         this.requestWeather(this.lat, this.lon);
         this.selectTitle = this.locations[selectedLocation].krName;
       },
-      async requestWeather(lat, lon) {
-        const response = await getWeatherAPI(lat, lon);
-        console.log("res", response);
-
-        this.temp = parseInt(response.main.temp);
-        this.imageWearNum = wearIconNum(this.temp);
-        this.description = response.weather[0].main;
-        this.fasIcon = weatherIconSelet(this.description).iconName;
-        this.showLoading = false;
-      },
-      // async requestLocalName(lat, lon) {
-      //   const responseLocalName = await getLocalName(lat, lon);
-      //   // const localNameArr = responseLocalName.results[3].formatted_address.split(
-      //   //   " "
-      //   // );
-      //   // console.log(localNameArr);
-      //   // this.selectTitle = localNameArr[2];
-      //   console.log('kakao',responseLocalName)
-      // }
-      //   requestLocalName(lat,lon) {
-      //     const kakaoInit = {
-      //       method: "GET",
-      //       headers: { Authorization: `KakaoAK c68a0e4e945b4bc17ba5743f385dd2ad` }
-      //     };
-      //     return fetch(
-      //       `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${lon}&y=${lat}`,
-      //       kakaoInit
-      //     )
-      //     .then((response) => response.json())
-      //   .then((responseData) => {
-      //     console.log(responseData);
-      //   })
-      // },
       async requestLocalName(lat, lon) {
         const responseLocalName = await getLocalName(lat, lon);
-        // await function(data){ console.log(data)}
-        // const LocalNameData = responseLocalName.json()
-        // const LocalNameDataSucc = LocalNameData.data
         this.selectTitle = responseLocalName.documents[0].region_2depth_name;
-        // this.selectTitle = responseLocalName[document].region_2depth_name
       }
     },
     computed: {
       currentDate() {
         return moment().format("YYYY[-]MM[-]DD, hh:mm A");
-      },
-      currentTemperScope() {
-        return selectedTempScope(this.imageWearNum);
-      },
-      currentClothes() {
-        return selectedClothes(this.imageWearNum);
-      },
-      imageSrc() {
-        return require(`@/assets/${this.imageWearNum}.png`);
       }
     },
-    async mounted() {
-      console.log("처음", this.lat, this.lon);
-
+    async beforeCreate() {
       if (navigator.geolocation) {
         try {
           const { coords } = await requestLocation();
@@ -166,21 +82,16 @@
           const position = await geoLocationInLS();
           this.lat = position.lat;
           this.lon = position.lon;
-          console.log("현재", this.lat, this.lon);
-          this.requestWeather(this.lat, this.lon);
           this.requestLocalName(this.lat, this.lon);
         } catch (error) {
-          console.log(error);
           const { lat, lon } = this.locations[this.selectValue];
           this.lat = lat;
           this.lon = lon;
-          this.requestWeather(lat, lon);
         }
       } else {
         const { lat, lon } = this.locations[this.selectValue];
         this.lat = lat;
         this.lon = lon;
-        this.requestWeather(lat, lon);
       }
     }
   };
@@ -213,11 +124,11 @@
     display: block;
     clear: both;
   }
-  .current-position  {
+  .current-position {
     float: left;
     height: 30px;
     width: 100px;
-    border: none ;
+    border: none;
     border-radius: 10px;
     background: none;
     color: #fff;
@@ -233,11 +144,13 @@
     margin-bottom: 15px;
   }
   .current {
-    position: absolute;
+    /* position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    /* border: 1px solid */
+    transform: translate(-50%, -50%); */
+    border: 1px solid red;
+    width: 100%;
+    /* height: 50%; */
   }
   .main {
     margin: 10px 0;
@@ -245,28 +158,5 @@
   .main h3 {
     font-size: 1.5rem;
   }
-  .wear {
-    position: relative;
-    margin: 20px 0;
-  }
-  .wear-icon img {
-    width: 300px;
-  }
-  .modal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  .temper i {
-    margin-right: 15px;
-    vertical-align: middle;
-  }
-  .temper h3 {
-    display: inline-block;
-    border: 1px solid;
-    border-radius: 50px;
-    padding: 10px 0;
-    width: 180px;
-  }
+  
 </style>

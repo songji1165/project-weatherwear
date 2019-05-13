@@ -3,11 +3,9 @@ import { getWeatherAPI } from "@/api";
 //1. 사용자 위치 저장 값이 있는지 확인 (없으면 위치 요청/ 있으면 api호출)
 export function checkSavedLocation() {
   if (getLocationInLS() == null) {
-    console.log("위치요청");
     requestLocation();
   } else {
     const isLocation = JSON.parse(getWeatherAPI);
-    console.log(isLocation);
   }
 }
 
@@ -19,9 +17,7 @@ export function requestLocation() {
 }
 
 export function geoSucc(coords) {
-  console.log(coords);
   const { latitude, longitude } = coords;
-  console.log("갖고옴", latitude, longitude);
   saveLocationInLS(latitude, longitude);
 }
 export function geoErr() {

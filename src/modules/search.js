@@ -21,6 +21,6 @@ export function selectedClothes(clothNum) {
 //
 
 // weather icon
-export function weatherIconSelet(weather) {
+export function weatherIconSelect(weather) {
   return WeatherIcons[weather];
 }
