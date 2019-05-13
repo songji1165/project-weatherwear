@@ -1,0 +1,1 @@
+import { getLocalName } from "@/api"

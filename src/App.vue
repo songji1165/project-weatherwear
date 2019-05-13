@@ -9,7 +9,7 @@
 import HeaderBar from "@/components/Header.vue";
 
 export default {
-  components: { HeaderBar }
+  components: { HeaderBar },
 };
 </script>
 
@@ -32,7 +32,7 @@ span {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color:rgb(44,	62,	80);
   margin: 0 auto;
   text-align: center;
 }
@@ -41,33 +41,24 @@ li {
   list-style: none;
 }
 
-#app > div {
-  /* margin: 30px 0; */
-  /* border: 1px solid; */
-  /* width: 100%; */
-  /* height: 100vh; */
-}
-
 .ww {
   width: 100%;
-  /* height: 100vh; */
 }
 
 #head {
-  background: skyblue;
+  background: rgb(135,	206,	235);
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 50px;
   line-height: 50px;
-  color: #fff;
+  color: rgb(255,255,255);
   z-index: 2
 }
-/* main1 */
+
 .ww-main > div {
   float: left;
-  /* border: 1px solid; */
   margin: 70px 10%;
   text-align: center;
   width: 80%;
@@ -77,25 +68,5 @@ li {
   clear: both;
   display: block;
   content: "";
-}
-
-/* time daily */
-.title {
-  background: skyblue;
-  color: #fff;
-  margin-bottom: 10px;
-}
-
-.wrap {
-  background: skyblue;
-}
-
-.time-list li {
-  float: left;
-}
-.time-list::after {
-  content: "";
-  display: block;
-  clear: both;
 }
 </style>

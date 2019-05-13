@@ -1,6 +1,7 @@
 <template>
   <div class="selectBox">
-    <select name="local" id="local" v-model="selectValue">
+    <select name="local" id="local" @change="changeSelect">
+      <option value="">지역 선택</option>
       <option
         v-for="{ krName, enName } in locations"
         :value="enName"
@@ -12,6 +13,33 @@
   </div>
 </template>
 
-<script></script>
+<script>
+  export default {
+    props: ["locations"],
+    methods: {
+      changeSelect({ target: { value } }) {
+        this.$emit("handleClickSelect", value);
+      }
+    }
+  };
+</script>
 
-<style scoped></style>
+<style scoped>
+  select {
+    height: 30px;
+    width: 100px;
+    border-radius: 10px;
+    padding-left: 10px;
+    outline: none;
+    background: skyblue;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    outline: none;
+    border: none !important;
+    color: #fff;
+  }
+  option {
+    background: skyblue;
+    outline: none;
+    border: none;
+  }
+</style>

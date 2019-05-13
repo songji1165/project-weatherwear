@@ -1,26 +1,20 @@
 <template>
   <div class="main-wrap">
     <Loading v-show="showLoading" class="loading"></Loading>
-    <div class="selectBox">
-      <select name="local" id="local" v-model="selectValue">
-        <option
-          v-for="{ krName, enName } in locations"
-          :value="enName"
-          :key="enName"
-        >
-          {{ krName }}
-        </option>
-      </select>
-    </div>
+    <Select-box
+      v-model="selectedValue"
+      class="selectBox"
+      :locations="locations"
+      @handleClickSelect="handleClickSelect"
+    ></Select-box>
     <div class="main current">
       <h3 class="location">{{ selectTitle }}</h3>
       <p class="location-time">
-        <span class="now-date">{{ moment().format("YYYY[-]MM[-]DD") }}</span>
-        <span>{{ moment().format("hh:mm A") }}</span>
+        {{ currentDate }}
       </p>
       <div class="wear">
         <p class="wear-icon" @click="handleCloseModal">
-          <img :src="imageSrc" width="300" />
+          <img :src="imageSrc"/>
         </p>
         <Modal class="modal" v-if="showModal" @onClose="handleCloseModal">
           <div slot="header">
@@ -39,7 +33,7 @@
   </div>
 </template>
 <script>
-  import { getWeatherAPI } from "@/api/index.js";
+  import { getWeatherAPI, getLocalName } from "@/api/index.js";
   import {
     wearIconNum,
     selectedTempScope,
@@ -48,64 +42,96 @@
   } from "@/modules/search.js";
   import Modal from "./Modal";
   import Loading from "./Loading";
+  import SelectBox from "./Select";
   import locations from "@/json/location.json";
   import WeatherIcons from "@/json/weatherIcon.json";
+  import {
+    checkSavedLocation,
+    geoSucc,
+    geoErr,
+    geoLocationInLS,
+    requestLocation
+  } from "@/modules/location.js";
   import moment from "moment";
 
-  const { VUE_APP_WHATHER_APP_KEY } = process.env;
-  // const moment = require("moment");
-
   export default {
-    components: { Modal, Loading },
+    components: { Modal, Loading, SelectBox },
     data() {
       return {
         showModal: false,
         locations,
-        selectValue: "seoul",
+        selectedValue: "seoul",
         lat: "",
         lon: "",
         res: "",
         imageWearNum: "0",
-        // weather: {},
         temp: "",
         description: "",
         fasIcon: "",
         moment,
-        showLoading: true
+        showLoading: true,
+        position: null,
+        krLocalNAme: "",
+        selectTitle: ""
       };
     },
     methods: {
       handleCloseModal() {
         this.showModal = !this.showModal;
       },
-      getWeather(lat, lon) {
-        getWeatherAPI(lat, lon)
-          .then(res => {
-            console.log("res");
-            const weather = res;
-            this.temp = parseInt(weather.main.temp);
-            this.imageWearNum = wearIconNum(this.temp);
-            this.description = weather.weather[0].main;
-            this.fasIcon = weatherIconSelet(this.description).iconName;
-          })
-          .then(() => setTimeout(() => (this.showLoading = false), 500));
+      handleClickSelect(selectedLocation) {
+        console.log(selectedLocation)
+        const { lat, lon } = this.locations[selectedLocation];
+        this.lat = lat;
+        this.lon = lon;
+        this.requestWeather(this.lat, this.lon);
+        this.selectTitle = this.locations[selectedLocation].krName;
+      },
+      async requestWeather(lat, lon) {
+        const response = await getWeatherAPI(lat, lon);
+        console.log('res',response);
 
-        // const response = await getWeatherAPI(this.lat, this.lon).fetch()
-        // fetch(
-        //   `https://api.openweathermap.org/data/2.5/weather?lat=${
-        //     this.lat
-        //   }&lon=${this.lon}&appid=${VUE_APP_WHATHER_APP_KEY}&units=metric`
-        // );
-
-        // this.weather = await response.json();
-        // console.log(
-        //   moment(this.weather.sys.sunset).format("YYYY[-]MM[-]DD,hh:mm A")
-        // );
-      }
-    },
+        this.temp = parseInt(response.main.temp);
+        this.imageWearNum = wearIconNum(this.temp);
+        this.description = response.weather[0].main;
+        this.fasIcon = weatherIconSelet(this.description).iconName;
+        this.showLoading = false
+      },
+      // async requestLocalName(lat, lon) {
+      //   const responseLocalName = await getLocalName(lat, lon);
+      //   // const localNameArr = responseLocalName.results[3].formatted_address.split(
+      //   //   " "
+      //   // );
+      //   // console.log(localNameArr);
+      //   // this.selectTitle = localNameArr[2];
+      //   console.log('kakao',responseLocalName)
+      // }
+    //   requestLocalName(lat,lon) {
+    //     const kakaoInit = {
+    //       method: "GET",
+    //       headers: { Authorization: `KakaoAK c68a0e4e945b4bc17ba5743f385dd2ad` }
+    //     };
+    //     return fetch(
+    //       `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${lon}&y=${lat}`,
+    //       kakaoInit
+    //     )
+    //     .then((response) => response.json())
+    //   .then((responseData) => {
+    //     console.log(responseData);
+    //   })
+    // },
+    async requestLocalName(lat,lon) {
+     const responseLocalName = await getLocalName(lat,lon)
+      // await function(data){ console.log(data)}
+      // const LocalNameData = responseLocalName.json()
+      // const LocalNameDataSucc = LocalNameData.data
+      this.selectTitle = responseLocalName.documents[0].region_2depth_name
+      // this.selectTitle = responseLocalName[document].region_2depth_name
+    }
+  },
     computed: {
-      selectTitle() {
-        return this.locations[this.selectValue].krName;
+      currentDate(){
+        return moment().format("YYYY[-]MM[-]DD, hh:mm A")
       },
       currentTemperScope() {
         return selectedTempScope(this.imageWearNum);
@@ -117,20 +143,32 @@
         return require(`@/assets/${this.imageWearNum}.png`);
       }
     },
-    watch: {
-      selectValue(en) {
-        const { lat, lon } = this.locations[en];
+    async mounted() {
+      console.log("처음", this.lat, this.lon);
+
+      if (navigator.geolocation) {
+        try {
+          const { coords } = await requestLocation();
+          geoSucc(coords);
+          const position = await geoLocationInLS();
+          this.lat = position.lat;
+          this.lon = position.lon;
+          console.log("현재", this.lat, this.lon);
+          this.requestWeather(this.lat, this.lon);
+          this.requestLocalName(this.lat, this.lon);
+        } catch (error) {
+          console.log(error);
+          const { lat, lon } = this.locations[this.selectValue];
+          this.lat = lat;
+          this.lon = lon;
+          this.requestWeather(lat, lon);
+        }
+      } else {
+        const { lat, lon } = this.locations[this.selectValue];
         this.lat = lat;
         this.lon = lon;
-        this.getWeather(this.lat, this.lon);
+        this.requestWeather(lat, lon);
       }
-    },
-    mounted() {
-      const { lat, lon } = this.locations[this.selectValue];
-      this.lat = lat;
-      this.lon = lon;
-      this.getWeather(this.lat, this.lon);
-      // this.showLoading = true
     }
   };
 </script>
@@ -153,31 +191,14 @@
     float: right;
     margin-right: 5%;
   }
-  select {
-    height: 30px;
-    width: 80px;
-    border-radius: 10px;
-    padding-left: 10px;
-    outline: none;
-    background: skyblue;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-    outline: none;
-    border: none !important;
-    color: #fff;
-  }
-  option {
-    background: skyblue;
-    outline: none;
-    border: none;
+  .location{
+    margin-bottom: 15px
   }
   .current {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-  }
-  .now-date {
-    margin-right: 10px;
   }
   .main {
     margin: 10px 0;
@@ -189,6 +210,9 @@
     position: relative;
     margin: 20px 0;
   }
+  .wear-icon img {
+    width: 300px
+  }
   .modal {
     position: absolute;
     top: 50%;
@@ -198,7 +222,6 @@
   i {
     margin-right: 15px;
     vertical-align: middle;
-    /* font-size: 0.9em; */
   }
   .temper h3 {
     display: inline-block;

@@ -3,12 +3,9 @@ import WeatherIcons from "@/json/weatherIcon.json";
 
 // wearicon번호 찾기
 export function wearIconNum(temp) {
-  const clothesValue = Object.keys(clothes);
-  const stringTemp = String(temp);
-  const wearNum = clothesValue.filter(
-    e => clothes[e].scope.indexOf(stringTemp) !== -1
+  return Object.keys(clothes).filter(
+    key => clothes[key].scope.indexOf(String(temp)) !== -1
   );
-  return wearNum;
 }
 
 // 기온별 구간 찾기
