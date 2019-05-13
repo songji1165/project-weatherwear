@@ -150,6 +150,7 @@
     transform: translate(-50%, -50%); */
     border: 1px solid red;
     width: 100%;
+    /* overflow: hidden; */
     /* height: 50%; */
   }
   .main {

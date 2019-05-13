@@ -41,3 +41,48 @@
 - axios, fetch, async를 그냥 넘기기엔 이 프로젝트에 주가 되는 것들이기 때문에 안 짚고 넘어갈 수가 없었다. 이틀동안 열심히 삽질한 결과 이제 어느정도 쓸 수 있게 된 것 같다.
   생활코딩을 통해 http통신에 대해 다시 한번 이론을 되짚어보았다.
   강의 중 지금은 이해 안 갈수 있다고 이런게 있다고만 넘기고 필요할 때 다시 보면 이해가 갈거라는 말이 너무 와닿았다. 예전에는 귀에 들어오지도 않던 내용들이 다시 보니 이해가 되었다. 지금도 완전히 이해하진 못했지만 나중에 다시 찾아보면 그땐 훨씬 잘 이해 될거라 생각한다.
+
+### 0512
+
+- weather API에서 지원하는 지역이름이 정확하지 않았다. 그래서 현재 좌표값으로 weatherAPI를 응답받게될시 지역이름을 새로 생성해주어야 했다.
+  이는 google geocoder API로 해결할 수 있었다. geoCoder API는 주소를 좌푯값으로 바꿔주고, 역 geoCoder는 반대로 좌표값을 주소로 바꿔준다.
+
+```js
+// api/index.js
+ export const getLocalName = (lat, lon) => {
+  return axios
+    .get(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=${VUE_APP_GEOCODING_APP_KEY}`
+    )
+    .then(res => res.data)
+    .catch(err => console.log(err));
+};
+
+
+// components/Today.vue
+  async requestLocalName(lat, lon) {
+        const responseLocalName = await getLocalName(lat, lon);
+        const localNameArr = responseLocalName.results[3].formatted_address.split(
+          " "
+        );
+        console.log(localNameArr);
+        this.selectTitle = localNameArr[2];
+      }
+```
+
+- google API가 "OVER_QUERY_LIMIT"가 떴다.. 내가 구성한 로직이 잘못된 것은 아닐가 단일로 통신을 테스트해보았다. 하지만 계속 에러가 났다.
+  알고보니 google API가 유료로 변경됬다고 한다. 다른 geoCoder API를 찾아봐야할 것 같다.
+- API 통신에 있어 API Key값은 인증하기 위한 고유의 비밀번호이므로 보안이 중요하다. dotenv(환경변수)를 이용해서 보안을 해주었다. vue cli3부터는 자체에 dotenv가 포함되어 있어 다른 설치없이 사용할 수 있었다.
+  > 1.  .env 파일 생성
+  2. "VUE*APP*"접두사로 환경변수 지정
+  3. process.env.\* 로 액세스 할 수 있다.
+
+### 0513
+
+- googleAPI를 kakao API로 대체해주었다. google과는 사용법이 달라 사용법을 익히는데에도 애를 먹었다. 나의 목적에 맞는 api는 rest api였다. google api는 url안에 키값만 넣으면 간단하게 사용할 수 있었으나 kakao의 rest api 요청문을 ajax형식으로 바꿔서 사용하는 것이 꽤 어려웠다. 그래도 덕분에 한 번 해보고 나니 생각보다 간단한 문제였다는 것을 알게 되었다.
+  > fetch에 두번째 인자로 초기값을 설정해주기.
+  > curl -v -X GET "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=127.1086228&y=37.4012191" \ -H "Authorization: KakaoAK kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
+  > {method : "GET", headers : `KakaoAK ${key}`}
+- 최고, 최저 기온 컴포넌트를 추가하기 위해 컴포넌트들을 전부 수정해주었다. 그래도 이전에 컴포넌트별로 잘 분리해 놓아서 여기저기 수정하는 것이 크게 어렵지 않았다.
+- 슬라이드를 추가했다. **'javascript30'**을 참고해서 mouse-drag 슬라이드를 구현해보았다. 좀 더 수정이 필요하긴 하다.
+- 굵직한 컴포넌트 하나를 끝내는 데에만 거의 이주가 걸렸다. 이 컴포넌트가 프로젝트의 70% 정도를 차지하는 부분이긴 하다. 이번 프로젝트는 사이드 프로젝트이기 때문에 욕심을 좀 버리고 중복되는 기능들을 최대한 줄여서 빠른 시일내에 끝낼 수 있도록 해야겠다.

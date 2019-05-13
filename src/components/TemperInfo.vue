@@ -2,7 +2,7 @@
   <div>
     <div class="wear">
       <p class="wear-icon" @click="handleCloseModal">
-        <img :src="imageSrc" />
+        <img :src="imageSrc" :class={smallIcon:isSmallIcon} />
       </p>
       <Modal class="modal" v-if="showModal" @onClose="handleCloseModal">
         <div slot="header">
@@ -32,7 +32,7 @@
 
   export default {
     components: { Modal },
-    props: ["temp", "description"],
+    props: ["temp", "description","isSmallIcon"],
     watch: {
       temp(temp) {
         this.imageWearNum = wearIconNum(temp);
@@ -45,7 +45,8 @@
       return {
         showModal: false,
         fasIcon: "",
-        imageWearNum: "0"
+        imageWearNum: "0",
+        showTitle:false
       };
     },
     methods: {
@@ -62,6 +63,9 @@
       },
       currentClothes() {
         return selectedClothes(this.imageWearNum);
+      },
+      smallIcon(){
+        return smallIcon
       }
     }
   };
@@ -72,8 +76,11 @@
     position: relative;
     margin: 20px 0;
   }
-  .wear-icon img {
+  img {
     width: 300px;
+  }
+  .smallIcon{
+    width: 200px
   }
   .modal {
     position: absolute;
