@@ -96,15 +96,38 @@
         this.fasIcon = weatherIconSelet(this.description).iconName;
         setTimeout(() => (this.showLoading = false), 500);
       },
-      async requestLocalName(lat, lon) {
-        const responseLocalName = await getLocalName(lat, lon);
-        const localNameArr = responseLocalName.results[3].formatted_address.split(
-          " "
-        );
-        console.log(localNameArr);
-        this.selectTitle = localNameArr[2];
-      }
-    },
+      // async requestLocalName(lat, lon) {
+      //   const responseLocalName = await getLocalName(lat, lon);
+      //   // const localNameArr = responseLocalName.results[3].formatted_address.split(
+      //   //   " "
+      //   // );
+      //   // console.log(localNameArr);
+      //   // this.selectTitle = localNameArr[2];
+      //   console.log('kakao',responseLocalName)
+      // }
+    //   requestLocalName(lat,lon) {
+    //     const kakaoInit = {
+    //       method: "GET",
+    //       headers: { Authorization: `KakaoAK c68a0e4e945b4bc17ba5743f385dd2ad` }
+    //     };
+    //     return fetch(
+    //       `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${lon}&y=${lat}`,
+    //       kakaoInit
+    //     )
+    //     .then((response) => response.json())
+    //   .then((responseData) => {
+    //     console.log(responseData);
+    //   })
+    // },
+    async requestLocalName(lat,lon) {
+     const responseLocalName = await getLocalName(lat,lon)
+      // await function(data){ console.log(data)}
+      // const LocalNameData = responseLocalName.json()
+      // const LocalNameDataSucc = LocalNameData.data
+      this.selectTitle = responseLocalName.documents[0].region_2depth_name
+      // this.selectTitle = responseLocalName[document].region_2depth_name
+    }
+  },
     computed: {
       currentTemperScope() {
         return selectedTempScope(this.imageWearNum);
@@ -126,9 +149,10 @@
           const position = await geoLocationInLS();
           this.lat = position.lat;
           this.lon = position.lon;
-          console.log("현", this.lat, this.lon);
+          console.log("현재", this.lat, this.lon);
           this.requestWeather(this.lat, this.lon);
           this.requestLocalName(this.lat, this.lon);
+          // this.requestLocalName();
         } catch (error) {
           console.log(error);
           const { lat, lon } = this.locations[this.selectValue];

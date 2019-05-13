@@ -17,9 +17,8 @@
   export default {
     props: ["locations"],
     methods: {
-      changeSelect(e) {
-        const selected = e.target.value;
-        this.$emit("handleClickSelect", selected);
+      changeSelect({ target: { value } }) {
+        this.$emit("handleClickSelect", value);
       }
     }
   };
