@@ -14,7 +14,7 @@
       </p>
       <div class="wear">
         <p class="wear-icon" @click="handleCloseModal">
-          <img :src="imageSrc"/>
+          <img :src="imageSrc" />
         </p>
         <Modal class="modal" v-if="showModal" @onClose="handleCloseModal">
           <div slot="header">
@@ -40,9 +40,9 @@
     selectedClothes,
     weatherIconSelet
   } from "@/modules/search.js";
-  import Modal from "./Modal";
-  import Loading from "./Loading";
-  import SelectBox from "./Select";
+  import Modal from "@/components/Modal";
+  import Loading from "@/components/Loading";
+  import SelectBox from "@/components/Select";
   import locations from "@/json/location.json";
   import WeatherIcons from "@/json/weatherIcon.json";
   import {
@@ -80,7 +80,7 @@
         this.showModal = !this.showModal;
       },
       handleClickSelect(selectedLocation) {
-        console.log(selectedLocation)
+        console.log(selectedLocation);
         const { lat, lon } = this.locations[selectedLocation];
         this.lat = lat;
         this.lon = lon;
@@ -89,13 +89,13 @@
       },
       async requestWeather(lat, lon) {
         const response = await getWeatherAPI(lat, lon);
-        console.log('res',response);
+        console.log("res", response);
 
         this.temp = parseInt(response.main.temp);
         this.imageWearNum = wearIconNum(this.temp);
         this.description = response.weather[0].main;
         this.fasIcon = weatherIconSelet(this.description).iconName;
-        this.showLoading = false
+        this.showLoading = false;
       },
       // async requestLocalName(lat, lon) {
       //   const responseLocalName = await getLocalName(lat, lon);
@@ -106,32 +106,32 @@
       //   // this.selectTitle = localNameArr[2];
       //   console.log('kakao',responseLocalName)
       // }
-    //   requestLocalName(lat,lon) {
-    //     const kakaoInit = {
-    //       method: "GET",
-    //       headers: { Authorization: `KakaoAK c68a0e4e945b4bc17ba5743f385dd2ad` }
-    //     };
-    //     return fetch(
-    //       `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${lon}&y=${lat}`,
-    //       kakaoInit
-    //     )
-    //     .then((response) => response.json())
-    //   .then((responseData) => {
-    //     console.log(responseData);
-    //   })
-    // },
-    async requestLocalName(lat,lon) {
-     const responseLocalName = await getLocalName(lat,lon)
-      // await function(data){ console.log(data)}
-      // const LocalNameData = responseLocalName.json()
-      // const LocalNameDataSucc = LocalNameData.data
-      this.selectTitle = responseLocalName.documents[0].region_2depth_name
-      // this.selectTitle = responseLocalName[document].region_2depth_name
-    }
-  },
+      //   requestLocalName(lat,lon) {
+      //     const kakaoInit = {
+      //       method: "GET",
+      //       headers: { Authorization: `KakaoAK c68a0e4e945b4bc17ba5743f385dd2ad` }
+      //     };
+      //     return fetch(
+      //       `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${lon}&y=${lat}`,
+      //       kakaoInit
+      //     )
+      //     .then((response) => response.json())
+      //   .then((responseData) => {
+      //     console.log(responseData);
+      //   })
+      // },
+      async requestLocalName(lat, lon) {
+        const responseLocalName = await getLocalName(lat, lon);
+        // await function(data){ console.log(data)}
+        // const LocalNameData = responseLocalName.json()
+        // const LocalNameDataSucc = LocalNameData.data
+        this.selectTitle = responseLocalName.documents[0].region_2depth_name;
+        // this.selectTitle = responseLocalName[document].region_2depth_name
+      }
+    },
     computed: {
-      currentDate(){
-        return moment().format("YYYY[-]MM[-]DD, hh:mm A")
+      currentDate() {
+        return moment().format("YYYY[-]MM[-]DD, hh:mm A");
       },
       currentTemperScope() {
         return selectedTempScope(this.imageWearNum);
@@ -191,8 +191,8 @@
     float: right;
     margin-right: 5%;
   }
-  .location{
-    margin-bottom: 15px
+  .location {
+    margin-bottom: 15px;
   }
   .current {
     position: absolute;
@@ -211,7 +211,7 @@
     margin: 20px 0;
   }
   .wear-icon img {
-    width: 300px
+    width: 300px;
   }
   .modal {
     position: absolute;
