@@ -10,12 +10,11 @@
     <div class="main current">
       <h3 class="location">{{ selectTitle }}</h3>
       <p class="location-time">
-        <span class="now-date">{{ moment().format("YYYY[-]MM[-]DD") }}</span>
-        <span>{{ moment().format("hh:mm A") }}</span>
+        {{ currentDate }}
       </p>
       <div class="wear">
         <p class="wear-icon" @click="handleCloseModal">
-          <img :src="imageSrc" width="300" />
+          <img :src="imageSrc"/>
         </p>
         <Modal class="modal" v-if="showModal" @onClose="handleCloseModal">
           <div slot="header">
@@ -80,21 +79,23 @@
       handleCloseModal() {
         this.showModal = !this.showModal;
       },
-      handleClickSelect(a) {
-        const { lat, lon } = this.locations[a];
+      handleClickSelect(selectedLocation) {
+        console.log(selectedLocation)
+        const { lat, lon } = this.locations[selectedLocation];
         this.lat = lat;
         this.lon = lon;
         this.requestWeather(this.lat, this.lon);
-        this.selectTitle = this.locations[a].krName;
+        this.selectTitle = this.locations[selectedLocation].krName;
       },
       async requestWeather(lat, lon) {
         const response = await getWeatherAPI(lat, lon);
-        console.log(response);
+        console.log('res',response);
+
         this.temp = parseInt(response.main.temp);
         this.imageWearNum = wearIconNum(this.temp);
         this.description = response.weather[0].main;
         this.fasIcon = weatherIconSelet(this.description).iconName;
-        setTimeout(() => (this.showLoading = false), 500);
+        this.showLoading = false
       },
       // async requestLocalName(lat, lon) {
       //   const responseLocalName = await getLocalName(lat, lon);
@@ -129,6 +130,9 @@
     }
   },
     computed: {
+      currentDate(){
+        return moment().format("YYYY[-]MM[-]DD, hh:mm A")
+      },
       currentTemperScope() {
         return selectedTempScope(this.imageWearNum);
       },
@@ -152,19 +156,18 @@
           console.log("현재", this.lat, this.lon);
           this.requestWeather(this.lat, this.lon);
           this.requestLocalName(this.lat, this.lon);
-          // this.requestLocalName();
         } catch (error) {
           console.log(error);
           const { lat, lon } = this.locations[this.selectValue];
           this.lat = lat;
           this.lon = lon;
-          this.requestWeather(this.lat, this.lon);
+          this.requestWeather(lat, lon);
         }
       } else {
         const { lat, lon } = this.locations[this.selectValue];
         this.lat = lat;
         this.lon = lon;
-        this.requestWeather(this.lat, this.lon);
+        this.requestWeather(lat, lon);
       }
     }
   };
@@ -188,14 +191,14 @@
     float: right;
     margin-right: 5%;
   }
+  .location{
+    margin-bottom: 15px
+  }
   .current {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-  }
-  .now-date {
-    margin-right: 10px;
   }
   .main {
     margin: 10px 0;
@@ -207,6 +210,9 @@
     position: relative;
     margin: 20px 0;
   }
+  .wear-icon img {
+    width: 300px
+  }
   .modal {
     position: absolute;
     top: 50%;
@@ -216,7 +222,6 @@
   i {
     margin-right: 15px;
     vertical-align: middle;
-    /* font-size: 0.9em; */
   }
   .temper h3 {
     display: inline-block;
