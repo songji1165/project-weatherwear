@@ -30,11 +30,8 @@
     width: 100px;
     border-radius: 10px;
     padding-left: 10px;
-    outline: none;
-    background: skyblue;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-    outline: none;
-    border: none !important;
+    background: none;
+    border: none;
     color: #fff;
   }
   option {
