@@ -3,7 +3,7 @@
     <Loading v-show="showLoading" class="loading"></Loading>
     <div class="main current">
       <div class="select-wrap">
-        <button class="current-position">
+        <button class="current-position" @click="handleClickReLocation">
           내 위치
           <i class="fas fa-map-marker-alt"></i>
         </button>
@@ -53,7 +53,7 @@
         lat: "",
         lon: "",
         moment,
-        position: null
+        position: null,
       };
     },
     methods: {
@@ -61,12 +61,14 @@
         const { lat, lon } = this.locations[selectedLocation];
         this.lat = lat;
         this.lon = lon;
-        this.requestWeather(this.lat, this.lon);
         this.selectTitle = this.locations[selectedLocation].krName;
       },
       async requestLocalName(lat, lon) {
         const responseLocalName = await getLocalName(lat, lon);
         this.selectTitle = responseLocalName.documents[0].region_2depth_name;
+      },
+      handleClickReLocation() {
+        this.requestLocalName(geoLocationInLS().lat, geoLocationInLS().lon);
       }
     },
     computed: {
@@ -87,11 +89,13 @@
           const { lat, lon } = this.locations[this.selectValue];
           this.lat = lat;
           this.lon = lon;
+          this.requestLocalName(this.lat, this.lon);
         }
       } else {
         const { lat, lon } = this.locations[this.selectValue];
         this.lat = lat;
         this.lon = lon;
+        this.requestLocalName(this.lat, this.lon);
       }
     }
   };
@@ -159,5 +163,4 @@
   .main h3 {
     font-size: 1.5rem;
   }
-  
 </style>

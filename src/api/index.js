@@ -13,12 +13,13 @@ export const getWeatherAPI = (lat, lon) => {
     });
 };
 
-
+const param = { 
+  method : 'GET',
+  headers : {"Authorization": `KakaoAK ${VUE_APP_GEOCODING_APP_KEY}`}
+}
 export const getLocalName = (lat, lon) => {
-  return fetch(`https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${lon}&y=${lat}`,{
-    method : 'GET',
-    headers : {"Authorization": `KakaoAK ${VUE_APP_GEOCODING_APP_KEY}`}
-  })
+  return fetch(`https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${lon}&y=${lat}`,param
+    )
     .then(res => {
       return res.json()})
 };

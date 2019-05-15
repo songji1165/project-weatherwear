@@ -4,7 +4,7 @@
       <p class="wear-icon" @click="handleCloseModal">
         <img :src="imageSrc" :class={smallIcon:isSmallIcon} />
       </p>
-      <Modal class="modal" v-if="showModal" @onClose="handleCloseModal">
+      <Modal class="modal" v-if="showModal" @onClose="handleCloseModal" >
         <div slot="header">
           <h3>{{ currentTemperScope }} &#176;</h3>
         </div>
@@ -36,6 +36,7 @@
     watch: {
       temp(temp) {
         this.imageWearNum = wearIconNum(temp);
+        console.log("num",this.imageWearNum)
       },
       description(description) {
         this.fasIcon = weatherIconSelect(description).iconName;
@@ -87,6 +88,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    background: red
   }
   i {
     margin-right: 15px;

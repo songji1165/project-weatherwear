@@ -1,6 +1,14 @@
 <template>
   <div class="slider">
-    <div class="slide-wrap" :class="{active:isActive}">
+    <div
+      class="slide-wrap"
+      ref="slider"
+      :class="{active:isActive}"
+      @mousedown="mouseDown"
+      @mouseleave="mouseLeave"
+      @mouseup="mouseUp"
+      @mousemove="mouseMove"
+    >
       <div class="current-temp">
         <temper-info :temp="temp" :description="description"> </temper-info>
       </div>
@@ -35,12 +43,12 @@
     components: { TemperInfo },
     props: ["lat", "lon"],
     watch: {
-      lat(val) {
-        this.geo.push({ lat: val });
+      lat(newV,oldV) {
+        this.requestWeather(this.lat, this.lon);
+        console.log("here",this.max)
       },
-      lon(val) {
-        this.geo.push({ lon: val });
-        this.requestWeather(this.geo[0].lat, this.geo[1].lon);
+      lon(newV,oldV) {
+        this.requestWeather(this.lat, this.lon);
       }
     },
     data() {
@@ -49,54 +57,58 @@
         max: "",
         min: "",
         description: "",
-        geo: [],
         isSmallIcon: true,
-        isActive: false
+        isActive: false,
+        isDown: false,
+        startX: null,
+        scrollLeft: null
       };
     },
     methods: {
       async requestWeather(lat, lon) {
         const response = await getWeatherAPI(lat, lon);
+        console.log("날씨정보",response)
 
         this.temp = parseInt(response.main.temp);
         this.max = parseInt(response.main.temp_max);
         this.min = parseInt(response.main.temp_min);
         this.description = response.weather[0].main;
+      },
+      mouseDown(e) {
+        this.isDown = true;
+        this.isActive = true;
+        this.startX = e.pageX - this.$refs.slider.offsetLeft;
+        this.scrollLeft = this.$refs.slider.scrollLeft;
+      },
+      mouseLeave() {
+        this.isDown = false;
+        this.isActive = false;
+      },
+      mouseUp() {
+        this.isDown = false;
+        this.isActive = false;
+      },
+      mouseMove(e) {
+        if (!this.isDown) return;
+        e.preventDefault();
+        const x = e.pageX - this.$refs.slider.offsetLeft;
+        const walk = x - this.startX;
+        if (walk <= 0) {
+          this.$refs.slider.style.left = "-100%";
+        } else {
+          this.$refs.slider.style.left = "0";
+        }
       }
     },
-    mounted() {
-      const slider = document.querySelector(".slide-wrap");
-      let isDown = false;
-      let startX;
-      let scrollLeft;
-      slider.addEventListener("mousedown", e => {
-        isDown = true;
-        this.isActive = true;
-        startX = e.pageX - slider.offsetLeft;
-        console.log("시작", startX);
-        scrollLeft = slider.scrollLeft;
-      });
-      slider.addEventListener("mouseleave", () => {
-        isDown = false;
-        this.isActive = false;
-        console.log("leave");
-      });
-      slider.addEventListener("mouseup", () => {
-        isDown = false;
-        this.isActive = false;
-        console.log("up");
-      });
-      slider.addEventListener("mousemove", e => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - slider.offsetLeft;
-        const walk = x - startX;
-        if (walk <= 0) {
-          slider.style.left = "-100%";
-        } else {
-          slider.style.left = "0";
-        }
-      });
+    Updated() {
+      this.mouseDown();
+      this.mouseLeave();
+      this.mouseUp();
+      this.mouseMove();
+    },
+    mounted(){
+      
+      console.log('변경전',this.lat)
     }
   };
 </script>
