@@ -47,6 +47,7 @@
     checkSavedLocation,
     geoSucc,
     geoErr,
+    geoAPI,
     geoLocationInLS,
     requestLocation
   } from "@/modules/location.js";
@@ -60,7 +61,7 @@
         locations,
         selectedValue: "seoul",
         selectTitle: "",
-        krLocalNAme: "",
+        // krLocalName: "",
         lat: "",
         lon: "",
         moment,
@@ -78,12 +79,18 @@
       },
       async requestLocalName(lat, lon) {
         const responseLocalName = await getLocalName(lat, lon);
+        console.log(responseLocalName);
         this.selectTitle = responseLocalName.documents[0].region_2depth_name;
       },
-      handleClickReLocation() {
-        this.lat = geoLocationInLS().lat;
-        this.lon = geoLocationInLS().lon;
-        this.requestLocalName(this.lat, this.lon);
+      async handleClickReLocation() {
+        try {
+          const { coords } = await requestLocation();
+          this.lat = geoLocationInLS().lat;
+          this.lon = geoLocationInLS().lon;
+          this.requestLocalName(this.lat, this.lon);
+        } catch (err) {
+          alert("현재 위치를 알 수 없습니다");
+        }
       },
       activeClick() {
         this.showGuide = false;
@@ -107,17 +114,21 @@
           this.lon = position.lon;
           this.requestLocalName(this.lat, this.lon);
         } catch (error) {
-          console.log(error)
-          const { lat, lon } = this.locations[this.selectedValue];
+          // alert("현재 위치가 정확하지 않습니다.");
+          console.log(error);
+          const { lat, lon, krName } = this.locations[this.selectedValue];
           this.lat = lat;
           this.lon = lon;
-          this.requestLocalName(this.lat, this.lon);
+          this.selectTitle = krName;
+          console.log(this.selectedValue);
+          // this.requestLocalName(this.lat, this.lon);
         }
       } else {
-        const { lat, lon } = this.locations[this.selectValue];
+        const { lat, lon, krName } = this.locations[this.selectValue];
         this.lat = lat;
         this.lon = lon;
-        this.requestLocalName(this.lat, this.lon);
+        this.selectTitle = this.krName;
+        // this.requestLocalName(this.lat, this.lon);
       }
     }
   };
@@ -127,7 +138,6 @@
   .main-wrap {
     height: 100vh;
     position: relative;
-   
   }
   .loading {
     position: fixed;

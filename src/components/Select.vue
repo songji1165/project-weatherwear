@@ -1,7 +1,7 @@
 <template>
   <div class="selectBox">
     <select name="local" id="local" @change="changeSelect">
-      <option value="">지역 선택</option>
+      <option value="" disabled selected>지역 선택</option>
       <option
         v-for="{ krName, enName } in locations"
         :value="enName"
