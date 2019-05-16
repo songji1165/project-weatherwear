@@ -1,9 +1,7 @@
 <template>
   <div>
-    동의해주세요
-    <button>
-      동의
-    </button>
+    현재 날씨 정보를 갖고 올 수 없습니다.
+    접속 상태를 확인해주세요 ..
   </div>
 </template>
 

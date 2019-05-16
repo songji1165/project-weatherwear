@@ -7,10 +7,10 @@ export const getWeatherAPI = (lat, lon) => {
     .get(
       `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${VUE_APP_WHATHER_APP_KEY}&units=metric`
     )
-    .then(res => res.data)
-    .catch(err => {
-      console.log(err)
-    });
+    // .then(res => res.data)
+    // .catch(err => {
+    //   console.log(err);
+    // });
 };
 
 const param = {

@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Weather from "./views/Weather.vue";
-import Home from "./views/Home.vue";
+import Loaderr from "./views/Loaderr.vue";
 
 Vue.use(Router);
 
@@ -14,8 +14,8 @@ const router = new Router({
       component: Weather
     },
     {
-      path: "/home",
-      component: Home
+      path: "/err",
+      component: Loaderr
     }
   ]
 });

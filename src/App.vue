@@ -47,14 +47,15 @@ li {
 
 #head {
   background: rgb(135, 206, 235);
-  position: fixed;
+  /* position: fixed;
   top: 0;
-  left: 0;
+  left: 0; */
   width: 100%;
   height: 50px;
   line-height: 50px;
   color: rgb(255, 255, 255);
   z-index: 2;
+  margin-bottom:60px 
 }
 
 .ww-main > div {
