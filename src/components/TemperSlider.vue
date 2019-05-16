@@ -73,19 +73,17 @@
     },
     methods: {
       async requestWeather(lat, lon) {
-        try{
-        const response = await getWeatherAPI(lat, lon);
-        const responseSucc = await response.data
-        this.temp = parseInt(responseSucc.main.temp);
-        this.max = parseInt(responseSucc.main.temp_max);
-        this.min = parseInt(responseSucc.main.temp_min);
-        this.description = responseSucc.weather[0].main;
-        this.$emit('loadSucc')
-        }
-        catch(err){
-          console.log(err)
-          return this.$router.push('/err')
-          // const responseErr = await response.responseErr
+        try {
+          const response = await getWeatherAPI(lat, lon);
+          const responseSucc = await response.data;
+          this.temp = parseInt(responseSucc.main.temp);
+          this.max = parseInt(responseSucc.main.temp_max);
+          this.min = parseInt(responseSucc.main.temp_min);
+          this.description = responseSucc.weather[0].main;
+          this.$emit("loadSucc");
+        } catch (err) {
+          console.log(err);
+          return this.$router.push("/err");
         }
       },
       mouseDown(e) {

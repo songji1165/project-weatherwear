@@ -1,7 +1,6 @@
 <template>
   <transition name="arrow">
     <div class="animation-arrow">
-      <span></span>
       <i class="far fa-hand-pointer"></i>
     </div>
   </transition>
@@ -12,6 +11,12 @@
 </script>
 
 <style scoped>
+  .animation-arrow{
+   text-align: right;
+   width: 100%;
+   padding: 5%;
+   z-index: 10
+  }
   i {
     font-size: 3rem;
     animation: 1s swipe infinite both;
@@ -22,7 +27,7 @@
       transform: translateX(0);
     }
     to {
-      transform: translateX(-30px);
+      transform: translateX(-50px);
     }
   }
 

@@ -136,7 +136,7 @@
 
 <style scoped>
   .main-wrap {
-    height: 100vh;
+    /* height: 100vh; */
     position: relative;
   }
   .loading {
@@ -148,8 +148,7 @@
     z-index: 1;
   }
   .select-wrap {
-    margin: 0 10% 5%;
-    padding: 2px 5px;
+    margin: 0 10% 15px;
     display: inline-block;
     background: skyblue;
     border-radius: 10px;
@@ -173,6 +172,9 @@
   .current-position i {
     margin-left: 5px;
   }
+  .current-position:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
   .select-box {
     float: left;
   }
@@ -190,9 +192,9 @@
   }
   .guide {
     position: fixed;
-    right: 5%;
+    left: 50%;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translate(-50%,-50%);
   }
   .article {
     position: relative;
