@@ -9,7 +9,7 @@
 import HeaderBar from "@/components/Header.vue";
 
 export default {
-  components: { HeaderBar },
+  components: { HeaderBar }
 };
 </script>
 
@@ -32,7 +32,7 @@ span {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color:rgb(44,	62,	80);
+  color: rgb(44, 62, 80);
   margin: 0 auto;
   text-align: center;
 }
@@ -46,15 +46,15 @@ li {
 }
 
 #head {
-  background: rgb(135,	206,	235);
+  background: rgb(135, 206, 235);
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 50px;
   line-height: 50px;
-  color: rgb(255,255,255);
-  z-index: 2
+  color: rgb(255, 255, 255);
+  z-index: 2;
 }
 
 .ww-main > div {

@@ -5,12 +5,12 @@
 </template>
 
 <script>
-  export default {};
+export default {};
 </script>
 
 <style scoped>
-div{
-    background: skyblue;
-    z-index: 5
+div {
+  background: skyblue;
+  z-index: 5;
 }
 </style>

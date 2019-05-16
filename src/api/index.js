@@ -9,18 +9,19 @@ export const getWeatherAPI = (lat, lon) => {
     )
     .then(res => res.data)
     .catch(err => {
-      console.log(err);
+      console.log(err)
     });
 };
 
-const param = { 
-  method : 'GET',
-  headers : {"Authorization": `KakaoAK ${VUE_APP_GEOCODING_APP_KEY}`}
-}
-export const getLocalName = (lat, lon) => {
-  return fetch(`https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${lon}&y=${lat}`,param
-    )
-    .then(res => {
-      return res.json()})
+const param = {
+  method: "GET",
+  headers: { Authorization: `KakaoAK ${VUE_APP_GEOCODING_APP_KEY}` }
 };
-
+export const getLocalName = (lat, lon) => {
+  return fetch(
+    `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${lon}&y=${lat}`,
+    param
+  ).then(res => {
+    return res.json();
+  });
+};
