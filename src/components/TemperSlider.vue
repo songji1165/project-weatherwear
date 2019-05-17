@@ -1,25 +1,38 @@
 <template>
   <div class="slider">
-    <div class="slide-wrap" :class="{active:isActive}">
+    <div
+      class="slide-wrap"
+      ref="slider"
+      :class="{ active: isActive }"
+      @mousedown="mouseDown"
+      @mouseleave="mouseLeave"
+      @mouseup="mouseUp"
+      @mousemove="mouseMove"
+    >
       <div class="current-temp">
         <temper-info :temp="temp" :description="description"> </temper-info>
       </div>
       <div class="daytime-temp">
         <div class="min-temp">
-          <h2 class="daytime-title">최저 기온</h2>
           <temper-info
             :temp="min"
             :description="description"
             :isSmallIcon="isSmallIcon"
-          ></temper-info>
+          >
+            <div slot="daytime-title" class="daytime-title">
+              최저기온
+            </div>
+          </temper-info>
         </div>
         <div class="max-temp">
-          <h2 class="daytime-title">최고 기온</h2>
           <temper-info
             :temp="max"
             :description="description"
             :isSmallIcon="isSmallIcon"
           >
+            <div slot="daytime-title" class="daytime-title">
+              최고 기온
+            </div>
           </temper-info>
         </div>
       </div>
@@ -30,17 +43,19 @@
 <script>
   import { getWeatherAPI } from "@/api/index.js";
   import TemperInfo from "@/components/TemperInfo";
+  // import Loading from "@/components/Loading";
 
   export default {
     components: { TemperInfo },
     props: ["lat", "lon"],
     watch: {
-      lat(val) {
-        this.geo.push({ lat: val });
+      lat(newV, oldV) {
+        console.count();
+        this.requestWeather(this.lat, this.lon);
+        console.log("here", this.max);
       },
-      lon(val) {
-        this.geo.push({ lon: val });
-        this.requestWeather(this.geo[0].lat, this.geo[1].lon);
+      lon(newV, oldV) {
+        this.requestWeather(this.lat, this.lon);
       }
     },
     data() {
@@ -49,54 +64,65 @@
         max: "",
         min: "",
         description: "",
-        geo: [],
         isSmallIcon: true,
-        isActive: false
+        isActive: false,
+        isDown: false,
+        startX: null,
+        scrollLeft: null
       };
     },
     methods: {
       async requestWeather(lat, lon) {
+        try{
         const response = await getWeatherAPI(lat, lon);
-
-        this.temp = parseInt(response.main.temp);
-        this.max = parseInt(response.main.temp_max);
-        this.min = parseInt(response.main.temp_min);
-        this.description = response.weather[0].main;
+        const responseSucc = await response.data
+        this.temp = parseInt(responseSucc.main.temp);
+        this.max = parseInt(responseSucc.main.temp_max);
+        this.min = parseInt(responseSucc.main.temp_min);
+        this.description = responseSucc.weather[0].main;
+        this.$emit('loadSucc')
+        }
+        catch(err){
+          console.log(err)
+          return this.$router.push('/err')
+          // const responseErr = await response.responseErr
+        }
+      },
+      mouseDown(e) {
+        this.isDown = true;
+        this.isActive = true;
+        this.startX = e.pageX - this.$refs.slider.offsetLeft;
+        this.scrollLeft = this.$refs.slider.scrollLeft;
+        this.$emit("activeClick");
+      },
+      mouseLeave() {
+        this.isDown = false;
+        this.isActive = false;
+      },
+      mouseUp() {
+        this.isDown = false;
+        this.isActive = false;
+      },
+      mouseMove(e) {
+        if (!this.isDown) return;
+        e.preventDefault();
+        const x = e.pageX - this.$refs.slider.offsetLeft;
+        const walk = x - this.startX;
+        if (walk <= 0) {
+          this.$refs.slider.style.left = "-100%";
+        } else {
+          this.$refs.slider.style.left = "0";
+        }
+      },
+      succLoad() {
+        this.showLoading = false;
       }
     },
-    mounted() {
-      const slider = document.querySelector(".slide-wrap");
-      let isDown = false;
-      let startX;
-      let scrollLeft;
-      slider.addEventListener("mousedown", e => {
-        isDown = true;
-        this.isActive = true;
-        startX = e.pageX - slider.offsetLeft;
-        console.log("시작", startX);
-        scrollLeft = slider.scrollLeft;
-      });
-      slider.addEventListener("mouseleave", () => {
-        isDown = false;
-        this.isActive = false;
-        console.log("leave");
-      });
-      slider.addEventListener("mouseup", () => {
-        isDown = false;
-        this.isActive = false;
-        console.log("up");
-      });
-      slider.addEventListener("mousemove", e => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - slider.offsetLeft;
-        const walk = x - startX;
-        if (walk <= 0) {
-          slider.style.left = "-100%";
-        } else {
-          slider.style.left = "0";
-        }
-      });
+    Updated() {
+      this.mouseDown();
+      this.mouseLeave();
+      this.mouseUp();
+      this.mouseMove();
     }
   };
 </script>
@@ -105,6 +131,12 @@
   .slider {
     width: 100%;
     overflow: hidden;
+    position: relative;
+  }
+  .loading {
+    position: absolute;
+    top: 0;
+    left: 0;
   }
   .slide-wrap {
     position: relative;
@@ -115,7 +147,6 @@
   }
   .slide-wrap > div {
     float: left;
-    border: 1px solid blue;
     width: 50%;
     height: 380px;
   }
@@ -132,8 +163,9 @@
     width: 50%;
   }
   .daytime-title {
-    position: absoulute;
-    top: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
   }
 
   .active {

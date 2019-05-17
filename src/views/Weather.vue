@@ -1,9 +1,8 @@
 <template>
   <div class="main-wrap">
-    <Loading v-show="showLoading" class="loading"></Loading>
     <div class="main current">
       <div class="select-wrap">
-        <button class="current-position">
+        <button class="current-position" @click="handleClickReLocation">
           내 위치
           <i class="fas fa-map-marker-alt"></i>
         </button>
@@ -14,13 +13,24 @@
           @handleClickSelect="handleClickSelect"
         ></Select-box>
       </div>
-      <h3 class="location">{{ selectTitle }}</h3>
-      <p class="location-time">
-        {{ currentDate }}
-      </p>
+      <div class="article">
+        <Loading class="loading" v-show="showLoading"></Loading>
+        <h3 class="location">{{ selectTitle }}</h3>
+        <p class="location-time">
+          {{ currentDate }}
+        </p>
 
-      <Temper-slider class="slider" :lat="lat" :lon="lon"> </Temper-slider>
+        <Temper-slider
+          class="slider"
+          :lat="lat"
+          :lon="lon"
+          @activeClick="activeClick"
+          @loadSucc="loadSucc"
+        >
+        </Temper-slider>
+      </div>
     </div>
+    <Guide class="guide" v-if="showGuide"></Guide>
   </div>
 </template>
 <script>
@@ -29,6 +39,7 @@
   import TemperSlider from "@/components/TemperSlider";
   import Loading from "@/components/Loading";
   import SelectBox from "@/components/Select";
+  import Guide from "@/components/Guide";
 
   import locations from "@/json/location.json";
 
@@ -36,24 +47,27 @@
     checkSavedLocation,
     geoSucc,
     geoErr,
+    geoAPI,
     geoLocationInLS,
     requestLocation
   } from "@/modules/location.js";
   import moment from "moment";
 
   export default {
-    components: { Loading, SelectBox, TemperSlider },
+    components: { Loading, SelectBox, TemperSlider, Guide, Loading },
     data() {
       return {
         showLoading: false,
         locations,
         selectedValue: "seoul",
         selectTitle: "",
-        krLocalNAme: "",
+        // krLocalName: "",
         lat: "",
         lon: "",
         moment,
-        position: null
+        position: null,
+        showGuide: true,
+        showLoading: true
       };
     },
     methods: {
@@ -61,12 +75,28 @@
         const { lat, lon } = this.locations[selectedLocation];
         this.lat = lat;
         this.lon = lon;
-        this.requestWeather(this.lat, this.lon);
         this.selectTitle = this.locations[selectedLocation].krName;
       },
       async requestLocalName(lat, lon) {
         const responseLocalName = await getLocalName(lat, lon);
+        console.log(responseLocalName);
         this.selectTitle = responseLocalName.documents[0].region_2depth_name;
+      },
+      async handleClickReLocation() {
+        try {
+          const { coords } = await requestLocation();
+          this.lat = geoLocationInLS().lat;
+          this.lon = geoLocationInLS().lon;
+          this.requestLocalName(this.lat, this.lon);
+        } catch (err) {
+          alert("현재 위치를 알 수 없습니다");
+        }
+      },
+      activeClick() {
+        this.showGuide = false;
+      },
+      loadSucc() {
+        this.showLoading = false;
       }
     },
     computed: {
@@ -74,7 +104,7 @@
         return moment().format("YYYY[-]MM[-]DD, hh:mm A");
       }
     },
-    async beforeCreate() {
+    async mounted() {
       if (navigator.geolocation) {
         try {
           const { coords } = await requestLocation();
@@ -84,14 +114,21 @@
           this.lon = position.lon;
           this.requestLocalName(this.lat, this.lon);
         } catch (error) {
-          const { lat, lon } = this.locations[this.selectValue];
+          // alert("현재 위치가 정확하지 않습니다.");
+          console.log(error);
+          const { lat, lon, krName } = this.locations[this.selectedValue];
           this.lat = lat;
           this.lon = lon;
+          this.selectTitle = krName;
+          console.log(this.selectedValue);
+          // this.requestLocalName(this.lat, this.lon);
         }
       } else {
-        const { lat, lon } = this.locations[this.selectValue];
+        const { lat, lon, krName } = this.locations[this.selectValue];
         this.lat = lat;
         this.lon = lon;
+        this.selectTitle = this.krName;
+        // this.requestLocalName(this.lat, this.lon);
       }
     }
   };
@@ -101,7 +138,6 @@
   .main-wrap {
     height: 100vh;
     position: relative;
-    padding-top: 60px;
   }
   .loading {
     position: fixed;
@@ -144,14 +180,7 @@
     margin-bottom: 15px;
   }
   .current {
-    /* position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); */
-    border: 1px solid red;
     width: 100%;
-    /* overflow: hidden; */
-    /* height: 50%; */
   }
   .main {
     margin: 10px 0;
@@ -159,5 +188,18 @@
   .main h3 {
     font-size: 1.5rem;
   }
-  
+  .guide {
+    position: fixed;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .article {
+    position: relative;
+  }
+  .loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 </style>

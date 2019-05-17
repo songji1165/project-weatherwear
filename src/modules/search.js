@@ -3,9 +3,15 @@ import WeatherIcons from "@/json/weatherIcon.json";
 
 // wearicon번호 찾기
 export function wearIconNum(temp) {
-  return Object.keys(clothes).filter(
-    key => clothes[key].scope.indexOf(String(temp)) !== -1
-  );
+  if (temp <= 5) {
+    return "0";
+  } else if (temp >= 27) {
+    return "7";
+  } else {
+    return Object.keys(clothes).filter(
+      key => clothes[key].scope.indexOf(String(temp)) !== -1
+    );
+  }
 }
 
 // 기온별 구간 찾기
