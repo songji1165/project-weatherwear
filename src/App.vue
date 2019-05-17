@@ -34,7 +34,7 @@ span {
   margin: 0 auto;
   text-align: center;
 }
-.body{
-  height: 100%
+.body {
+  height: 100%;
 }
 </style>

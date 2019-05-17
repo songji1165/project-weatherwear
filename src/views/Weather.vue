@@ -34,174 +34,168 @@
   </div>
 </template>
 <script>
-  import { getWeatherAPI, getLocalName } from "@/api/index.js";
+import { getLocalName } from "@/api/index.js";
 
-  import TemperSlider from "@/components/TemperSlider";
-  import Loading from "@/components/Loading";
-  import SelectBox from "@/components/Select";
-  import Guide from "@/components/Guide";
+import TemperSlider from "@/components/TemperSlider";
+import Loading from "@/components/Loading";
+import SelectBox from "@/components/Select";
+import Guide from "@/components/Guide";
 
-  import locations from "@/json/location.json";
+import locations from "@/json/location.json";
 
-  import {
-    checkSavedLocation,
-    geoSucc,
-    geoErr,
-    geoAPI,
-    geoLocationInLS,
-    requestLocation
-  } from "@/modules/location.js";
-  import moment from "moment";
+import {
+  geoSucc,
+  geoErr,
+  geoLocationInLS,
+  requestLocation
+} from "@/modules/location.js";
+import moment from "moment";
 
-  export default {
-    components: { Loading, SelectBox, TemperSlider, Guide, Loading },
-    data() {
-      return {
-        showLoading: false,
-        locations,
-        selectedValue: "seoul",
-        selectTitle: "",
-        // krLocalName: "",
-        lat: "",
-        lon: "",
-        moment,
-        position: null,
-        showGuide: true,
-        showLoading: true
-      };
+export default {
+  components: { Loading, SelectBox, TemperSlider, Guide },
+  data() {
+    return {
+      locations,
+      selectedValue: "seoul",
+      selectTitle: "",
+      lat: "",
+      lon: "",
+      moment,
+      position: null,
+      showGuide: true,
+      showLoading: true
+    };
+  },
+  methods: {
+    handleClickSelect(selectedLocation) {
+      const { lat, lon } = this.locations[selectedLocation];
+      this.lat = lat;
+      this.lon = lon;
+      this.selectTitle = this.locations[selectedLocation].krName;
     },
-    methods: {
-      handleClickSelect(selectedLocation) {
-        const { lat, lon } = this.locations[selectedLocation];
-        this.lat = lat;
-        this.lon = lon;
-        this.selectTitle = this.locations[selectedLocation].krName;
-      },
-      async requestLocalName(lat, lon) {
+    async requestLocalName(lat, lon) {
+      try {
         const responseLocalName = await getLocalName(lat, lon);
-        console.log(responseLocalName);
-        this.selectTitle = responseLocalName.documents[0].region_2depth_name;
-      },
-      async handleClickReLocation() {
-        try {
-          const { coords } = await requestLocation();
-          this.lat = geoLocationInLS().lat;
-          this.lon = geoLocationInLS().lon;
-          this.requestLocalName(this.lat, this.lon);
-        } catch (err) {
-          alert("현재 위치를 알 수 없습니다");
-        }
-      },
-      activeClick() {
-        this.showGuide = false;
-      },
-      loadSucc() {
-        this.showLoading = false;
+        const localNameData = responseLocalName.data;
+        this.selectTitle = localNameData.documents[0].region_2depth_name;
+      } catch (err) {
+        alert("현재 위치를 알 수 없습니다");
       }
     },
-    computed: {
-      currentDate() {
-        return moment().format("YYYY[-]MM[-]DD, hh:mm A");
-      }
-    },
-    async mounted() {
-      if (navigator.geolocation) {
-        try {
-          const { coords } = await requestLocation();
-          geoSucc(coords);
-          const position = await geoLocationInLS();
-          this.lat = position.lat;
-          this.lon = position.lon;
-          this.requestLocalName(this.lat, this.lon);
-        } catch (error) {
-          // alert("현재 위치가 정확하지 않습니다.");
-          console.log(error);
-          const { lat, lon, krName } = this.locations[this.selectedValue];
-          this.lat = lat;
-          this.lon = lon;
-          this.selectTitle = krName;
-          console.log(this.selectedValue);
-          // this.requestLocalName(this.lat, this.lon);
-        }
-      } else {
-        const { lat, lon, krName } = this.locations[this.selectValue];
+    async handleClickReLocation() {
+      try {
+        const { lat, lon } = geoLocationInLS();
         this.lat = lat;
         this.lon = lon;
-        this.selectTitle = this.krName;
-        // this.requestLocalName(this.lat, this.lon);
+        this.requestLocalName(this.lat, this.lon);
+      } catch (err) {
+        alert("현재 위치를 알 수 없습니다");
       }
+    },
+    activeClick() {
+      this.showGuide = false;
+    },
+    loadSucc() {
+      this.showLoading = false;
     }
-  };
+  },
+  computed: {
+    currentDate() {
+      return moment().format("YYYY[-]MM[-]DD, hh:mm A");
+    }
+  },
+  async mounted() {
+    if (navigator.geolocation) {
+      try {
+        const { coords } = await requestLocation();
+        geoSucc(coords);
+        const position = await geoLocationInLS();
+        this.lat = position.lat;
+        this.lon = position.lon;
+        this.requestLocalName(this.lat, this.lon);
+      } catch (error) {
+        const { lat, lon, krName } = this.locations[this.selectedValue];
+        this.lat = lat;
+        this.lon = lon;
+        this.selectTitle = krName;
+      }
+    } else {
+      const { lat, lon, krName } = this.locations[this.selectValue];
+      this.lat = lat;
+      this.lon = lon;
+      this.selectTitle = krName;
+    }
+  }
+};
 </script>
 
 <style scoped>
-  .main-wrap {
-    /* height: 100vh; */
-    position: relative;
-  }
-  .loading {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 1;
-  }
-  .select-wrap {
-    margin: 0 10% 15px;
-    display: inline-block;
-    background: skyblue;
-    border-radius: 10px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-  }
-  .select-wrap:after {
-    content: "";
-    display: block;
-    clear: both;
-  }
-  .current-position {
-    float: left;
-    height: 30px;
-    width: 100px;
-    border: none;
-    border-radius: 10px;
-    background: none;
-    color: #fff;
-    cursor: pointer;
-  }
-  .current-position i {
-    margin-left: 5px;
-  }
-  .current-position:hover {
-    background: rgba(0, 0, 0, 0.1);
-  }
-  .select-box {
-    float: left;
-  }
-  .location {
-    margin-bottom: 15px;
-  }
-  .current {
-    width: 100%;
-  }
-  .main {
-    margin: 10px 0;
-  }
-  .main h3 {
-    font-size: 1.5rem;
-  }
-  .guide {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%,-50%);
-  }
-  .article {
-    position: relative;
-  }
-  .loading {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
+.main-wrap {
+  position: relative;
+}
+.loading {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+.select-wrap {
+  margin: 0 10% 15px;
+  display: inline-block;
+  background: skyblue;
+  border-radius: 10px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+.select-wrap:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.current-position {
+  float: left;
+  height: 30px;
+  width: 100px;
+  border: none;
+  border-radius: 10px;
+  background: none;
+  color: #fff;
+  cursor: pointer;
+}
+.current-position i {
+  margin-left: 5px;
+}
+.current-position:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+.select-box {
+  float: left;
+}
+.location {
+  margin-bottom: 15px;
+}
+.current {
+  width: 100%;
+}
+.main {
+  margin: 10px 0;
+}
+.main h3 {
+  font-size: 1.5rem;
+}
+.guide {
+  position: fixed;
+  right: 0%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.article {
+  position: relative;
+}
+.loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 </style>
