@@ -1,15 +1,19 @@
 {
+  "homepage": "https:/weatherwear.github.io",
   "name": "project-weather-wear",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "axios": "^0.18.0",
     "core-js": "^2.6.5",
+    "gh-pages": "^2.0.1",
     "moment": "^2.24.0",
     "vue": "^2.6.10",
     "vue-browser-geolocation": "^1.5.0",
