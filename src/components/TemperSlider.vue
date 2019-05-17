@@ -93,7 +93,6 @@ export default {
       this.isActive = true;
       this.startX = e.pageX - this.$refs.slider.offsetLeft;
       this.scrollLeft = this.$refs.slider.scrollLeft;
-      this.$emit("activeClick");
     },
     mouseLeave() {
       this.isDown = false;
@@ -108,8 +107,9 @@ export default {
       e.preventDefault();
       const x = e.pageX - this.$refs.slider.offsetLeft;
       const walk = x - this.startX;
-      if (walk <= 0) {
+      if (walk <= 0 && walk <= -100) {
         this.$refs.slider.style.left = "-100%";
+        this.$emit("activeClick");
       } else {
         this.$refs.slider.style.left = "0";
       }
