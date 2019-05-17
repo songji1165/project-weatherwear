@@ -1,51 +1,47 @@
 <template>
   <transition name="arrow">
     <div class="animation-arrow">
-      <span></span>
-      <i class="far fa-hand-pointer"></i>
+      <i class="far fa-hand-pointer guide-icon"></i>
     </div>
   </transition>
 </template>
 
 <script>
-  export default {};
+export default {};
 </script>
 
 <style scoped>
-  i {
-    font-size: 3rem;
-    animation: 1s swipe infinite both;
-    opacity: 0.3;
+.animation-arrow {
+  padding: 5%;
+  z-index: 10;
+  transition: all 0.5s ease;
+}
+i {
+  font-size: 3rem;
+  animation: 1s swipe infinite both;
+  opacity: 0.3;
+  transition: all 0.5s ease;
+}
+@keyframes swipe {
+  from {
+    transform: translateX(0);
   }
-  @keyframes swipe {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-30px);
-    }
+  to {
+    transform: translateX(-50px);
   }
+}
 
-  .arrow-fade-enter-active {
-    transition: all 0.3s ease;
-  }
+.arrow-enter {
+  opacity: 0;
+}
 
-  .arrow-fade-leave-active {
-    transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
-  }
+.arrow-leave-active {
+  opacity: 0;
+}
 
-  .arrow-fade-enter,
-  .arrow-fade-leave-to {
-    -webkit-transform: scale(1.1);
-    transform: scale(1.1);
-  }
-  /* .arrow-enter,
-  .arrow-leave-to {
-    opacity: 0;
-  }
-
-  .arrow-leave-active .arrow-container {
-    transition: 5s;
-    opacity: 0;
-  } */
+.arrow-enter .guide-icon,
+.arrow-leave-active .guide-icon {
+  font-size: 0.7rem;
+  animation-play-state: paused;
+}
 </style>

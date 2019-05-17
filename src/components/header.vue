@@ -10,4 +10,14 @@ export default {
 };
 </script>
 
-<style lang="less"></style>
+<style scoped>
+#head {
+  background: rgb(135, 206, 235);
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  color: rgb(255, 255, 255);
+  z-index: 2;
+  margin-bottom: 40px;
+}
+</style>

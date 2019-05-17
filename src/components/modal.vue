@@ -1,8 +1,8 @@
 <template>
   <transition name="modal">
-    <div class="modal-mask">
+    <div class="modal-mask" @click="modalWrapClick">
       <div class="modal-wrapper">
-        <div class="modal-container">
+        <div class="modal-container" @click.stop>
           <div class="modal-header">
             <slot name="header"> </slot>
           </div>
@@ -30,6 +30,9 @@ export default {
   methods: {
     handleCloseModal() {
       this.$emit("onClose");
+    },
+    modalWrapClick() {
+      this.$emit("onClose");
     }
   }
 };
@@ -37,23 +40,23 @@ export default {
 
 <style>
 .modal-mask {
-  /* position: fixed; */
   z-index: 9998;
-  /* top: 0; */
-  /* left: 0; */
   width: 100%;
   height: 100%;
   /* background-color: rgba(0, 0, 0, 0.5); */
-  display: table;
   transition: opacity 0.3s ease;
+  position: relative;
 }
 
 .modal-wrapper {
-  display: table-cell;
-  vertical-align: middle;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .modal-container {
+  vertical-align: middle;
   width: 300px;
   margin: 0 auto;
   padding: 20px 30px;

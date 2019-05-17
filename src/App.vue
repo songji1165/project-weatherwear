@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Header-bar />
-    <router-view></router-view>
+    <router-view class="body"></router-view>
   </div>
 </template>
 
@@ -19,8 +19,6 @@ div,
 h1,
 h2,
 h3,
-ul,
-li,
 p,
 span {
   margin: 0;
@@ -36,38 +34,7 @@ span {
   margin: 0 auto;
   text-align: center;
 }
-
-li {
-  list-style: none;
-}
-
-.ww {
-  width: 100%;
-}
-
-#head {
-  background: rgb(135, 206, 235);
-  /* position: fixed;
-  top: 0;
-  left: 0; */
-  width: 100%;
-  height: 50px;
-  line-height: 50px;
-  color: rgb(255, 255, 255);
-  z-index: 2;
-  margin-bottom:60px 
-}
-
-.ww-main > div {
-  float: left;
-  margin: 70px 10%;
-  text-align: center;
-  width: 80%;
-}
-
-.ww-main::after {
-  clear: both;
-  display: block;
-  content: "";
+.body {
+  height: 100%;
 }
 </style>
