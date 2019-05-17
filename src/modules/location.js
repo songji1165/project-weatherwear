@@ -1,14 +1,3 @@
-// import { getWeatherAPI } from "@/api";
-
-// //1. 사용자 위치 저장 값이 있는지 확인 (없으면 위치 요청/ 있으면 api호출)
-// export function checkSavedLocation() {
-//   if (getLocationInLS() == null) {
-//     requestLocation();
-//   } else {
-//     const isLocation = JSON.parse(getWeatherAPI);
-//   }
-// }
-
 //2. 사용자 위치 요청
 export function requestLocation() {
   return new Promise((resolve, reject) => {

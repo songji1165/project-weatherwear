@@ -48,7 +48,6 @@ export default {
     },
     description(description) {
       this.fasIcon = weatherIconSelect(description).iconName;
-      console.log('2번 info전달',description)
       this.$emit("changeIcon");
     }
   },
@@ -76,9 +75,6 @@ export default {
       return selectedClothes(this.imageWearNum);
     }
   }
-  // mounted(){
-  //   imageSrc()
-  // }
 };
 </script>
 
