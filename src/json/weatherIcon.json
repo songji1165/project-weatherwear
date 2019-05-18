@@ -5,5 +5,6 @@
   "Snow": { "Kr": "눈", "iconName": "far fa-snowflake" },
   "Thunderstorm": { "Kr": "번개", "IconName": "fas fa-poo-storm" },
   "Clear": { "Kr": "맑음", "iconName": "fas fa-sun" },
-  "Rain": { "Kr": "비", "iconName": "fas fa-cloud-showers-heavy" }
+  "Rain": { "Kr": "비", "iconName": "fas fa-cloud-showers-heavy" },
+  "Drizzle": { "Kr": "이슬비", "iconName": "fas fa-umbrella" }
 }
