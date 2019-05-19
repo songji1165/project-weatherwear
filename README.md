@@ -8,7 +8,8 @@
 
 #### 2. 프로젝트 완성
 
-[songji1165@github.io](https://songji1165.github.io/project-weatherwear/)
+- [songji1165@github.ioproject-weatherwear/](https://songji1165.github.io/project-weatherwear/)
+
 <img src="./src/assets/WW중간점검.gif" width="300">
 
 - 아쉬운 점
