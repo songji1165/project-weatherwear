@@ -9,7 +9,7 @@
 #### 2. 프로젝트 완성
 
 [songji1165@github.io](https://songji1165.github.io/project-weatherwear/)
-<img src="./src/assets/WW중간전검.gif" width="300">
+<img src="./src/assets/WW중간점검.gif" width="300">
 
 - 아쉬운 점
   - 처음 기획한대로 완벽히 완성하지는 못했다. 중간에 계속 수정사항이 생겼고, 원래 기획했던대로 하기에 혼자서는 시간이 너무 오래 걸릴 것 같았다. 사이드 프로젝트이기 때문에 욕심을 조금 버리고 좀 더 심플하게 구성하여 완성하게 되었다.
